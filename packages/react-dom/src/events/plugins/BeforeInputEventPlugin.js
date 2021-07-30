@@ -54,7 +54,7 @@ const useFallbackCompositionData =
 const SPACEBAR_CODE = 32;
 const SPACEBAR_CHAR = String.fromCharCode(SPACEBAR_CODE);
 
-function registerEvents() {
+function registerEvents(phase) {
   registerTwoPhaseEvent('onBeforeInput', [
     'compositionend',
     'keypress',
@@ -85,6 +85,7 @@ function registerEvents() {
     'keyup',
     'mousedown',
   ]);
+  // EventsLogger.step('BeforeInputEventPlugin: registerSimpleEvents', phase)
 }
 
 // Track whether we've ever handled a keypress on the space key.

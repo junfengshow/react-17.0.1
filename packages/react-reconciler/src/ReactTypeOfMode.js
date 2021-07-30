@@ -17,3 +17,22 @@ export const DebugTracingMode = /*               */ 0b000100;
 export const StrictLegacyMode = /*               */ 0b001000;
 export const StrictEffectsMode = /*              */ 0b010000;
 export const ConcurrentUpdatesByDefaultMode = /* */ 0b100000;
+
+export const getModeStr = (mode) => {
+  switch (mode) {
+    case NoMode:
+      return 'NoMode';
+    case ConcurrentMode: 
+      return 'ConcurrentMode';
+    case ProfileMode: 
+      return 'ProfileMode';
+    case DebugTracingMode: 
+      return 'DebugTracingMode';
+    case StrictLegacyMode: 
+      return 'StrictLegacyMode';
+    case StrictEffectsMode: 
+      return 'StrictEffectsMode';
+    case ConcurrentUpdatesByDefaultMode: 
+      return 'ConcurrentUpdatesByDefaultMode';
+  }
+}

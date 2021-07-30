@@ -27,10 +27,11 @@ import {
   enableUpdaterTracking,
 } from 'shared/ReactFeatureFlags';
 import {initializeUpdateQueue} from './ReactUpdateQueue.old';
-import {LegacyRoot, ConcurrentRoot} from './ReactRootTags';
+import {LegacyRoot, ConcurrentRoot, getRootTagStr} from './ReactRootTags';
 
 function FiberRootNode(containerInfo, tag, hydrate) {
   this.tag = tag;
+  this.tagStr = getRootTagStr(tag);
   this.containerInfo = containerInfo;
   this.pendingChildren = null;
   this.current = null;

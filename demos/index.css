@@ -1,0 +1,262 @@
+* { margin: 0; padding: 0; }
+html, body {
+  width: 100%;
+  height: 100%;
+  background: #272822;
+  user-select: none;
+}
+i {
+  color: orange;
+  font-weight: 600;
+}
+strong {
+  color: #66d9ef;
+}
+em {
+  font-style: normal;
+  color: #f8f8f2;
+}
+a {
+  color: #ae81ff;
+  cursor: pointer;
+}
+.content-container {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  border: 1px solid #eee;
+  border-radius: 4px;
+  background: #fff;
+  width: 200px;
+  z-index: 1000;
+}
+
+#app {
+  padding: 10px;
+  height: 400px;
+  overflow: auto;
+}
+.actions {
+  color: #fff;
+  padding: 0 10px 10px; 
+  display: flex;
+}
+.actions h3 {
+  background: yellow;
+  padding: 4px 6px;
+  margin: 0 4px 0 0;
+  text-align: center;
+  font-size: 14px;
+}
+.actions a {
+  color: red;
+}
+
+#showLogger {
+  padding: 10px 0 140px;
+}
+#showLogger a:hover {
+  opacity: .8;
+}
+
+.page-line {
+  position: relative;
+  height: 10px;
+  margin: 0 20px;
+}
+.page-line:after {
+  content: '';
+  border-bottom: 1px dashed #eee;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 5px;
+}
+.page-line-title {
+  padding: 3px 20px;
+  color: #FF7559;
+  font-size: 12px;
+  line-height: 12px;
+  display: flex;
+}
+.page-line-color-blue:after {
+  border-bottom-color: #FF7559;
+}
+.page-line-title-green {
+  color: #ae81ff;
+}
+.page-line-color-green:after {
+  border-bottom-color: #ae81ff;
+}
+
+.code-wrap {
+  line-height: 14px;
+  background: #272822;
+  color: #f8f8f2;
+  display: flex;
+  padding: 3px 10px;
+  border-left: 1px dashed #eee;
+  margin: 0 10px;
+  position: relative;
+}
+#showLogger > .code-wrap {
+  border: 0;
+  border-radius: 4px;
+}
+.code-wrap h3 {
+  font-size: 13px;
+  font-weight: bold;
+  margin: 0 6px 0 0;
+  color: #e6db74; 
+  cursor: pointer;
+  white-space: nowrap;
+}
+.code-wrap h3:hover {
+  opacity: .8;
+}
+.code-wrap .title-level-warn {
+  color: #f92672;
+}
+.code-line {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  width: 100%;
+  padding: 0;
+  font-size: 12px;
+}
+.code-wrap-expends {
+  display: block;
+}
+.code-wrap-expends .code-expends {
+  padding: 0 10px;
+  font-size: 12px;
+  line-height: 18px;
+}
+.attribute {
+  color: #a6e22e;
+}
+
+.span-coder {
+  position: relative;
+}
+.coder-show {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  z-index: 1001;
+  background: #272822;
+  border: 1px dashed #eee;
+  white-space: nowrap;
+  display: block;
+  line-height: 18px;
+}
+.coder-show-line {
+  position: absolute;
+  top: 10px;
+  left: 0;
+  right: -10px;
+  height: 0;
+  border-top: 1px dashed #ccc;
+  background: #fff;
+}
+
+.step-wrap {
+  position: relative;
+  font-size: 13px;
+  display: flex;
+  line-height: 16px;
+  color: #f8f8f2;
+  padding: 3px 10px;
+  margin: 0 10px;
+}
+.step-wrap .title-step {
+  color: #a6e22e;
+  font-size: 13px;
+  font-weight: bold;
+  margin: 0 6px 0 0;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.tag-node-wrap {
+  padding: 3px 20px;
+  color: #f92672;
+  font-size: 13px;
+  line-height: 13px;
+  display: flex;
+}
+.tag-node-wrap dt {
+  margin-right: 6px;
+}
+.tag-node-wrap dd {
+  margin-right: 4px;
+}
+
+.warn-node-wrap {
+  padding: 0 10px;
+  color: red;
+  font-size: 12px;
+  font-weight: bold;
+  margin: 3px 20px;
+  background: yellow;
+}
+
+.compare-wrap {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  z-index: 1001;
+  background: #fff;
+  padding: 10px;
+  overflow: auto;
+}
+table {
+  border: 1px solid #e8e8e8;
+  border-right: 0;
+  border-bottom: 0;
+  width: 100%;
+  text-align: left;
+  border-radius: 4px 4px 0 0;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+table > thead > tr > th {
+  font-weight: 500;
+  text-align: left;
+  background: #fafafa;
+  border-bottom: 1px solid #e8e8e8;
+  border-right: 1px solid #e8e8e8;
+  padding: 10px;
+}
+table > tbody > tr:hover {
+  opacity: .98;
+  background: #eee;
+}
+table > tbody > tr > td {
+  border-right: 1px solid #e8e8e8;
+  border-bottom: 1px solid #e8e8e8;
+  padding: 6px 10px;
+}
+.compare-close {
+  margin-bottom: 10px;
+  font-size: 18px;
+  text-align: center;
+}
+.compare-close a {
+  color: red;
+}
+
+.click-container {
+  border: 1px solid #ddd;
+  padding: 6px 10px;
+  border-radius: 4px;
+  line-height: 30px;
+  font-size: 14px;
+  cursor: pointer;
+  display: block;
+}

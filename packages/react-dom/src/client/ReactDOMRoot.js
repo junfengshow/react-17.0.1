@@ -141,6 +141,7 @@ function createRootImpl(
     isStrictMode,
     concurrentUpdatesByDefaultOverride,
   );
+  // 将FiberRoot挂载在node(container)上
   markContainerAsRoot(root.current, container);
 
   const rootContainerElement =

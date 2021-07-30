@@ -26,11 +26,12 @@ import type {KnownReactSyntheticEvent} from '../ReactSyntheticEventType';
 import {HostComponent, HostText} from 'react-reconciler/src/ReactWorkTags';
 import {getNearestMountedFiber} from 'react-reconciler/src/ReactFiberTreeReflection';
 
-function registerEvents() {
+function registerEvents(phase) {
   registerDirectEvent('onMouseEnter', ['mouseout', 'mouseover']);
   registerDirectEvent('onMouseLeave', ['mouseout', 'mouseover']);
   registerDirectEvent('onPointerEnter', ['pointerout', 'pointerover']);
   registerDirectEvent('onPointerLeave', ['pointerout', 'pointerover']);
+  // EventsLogger.step('EnterLeaveEventPlugin: registerSimpleEvents', phase)
 }
 
 /**

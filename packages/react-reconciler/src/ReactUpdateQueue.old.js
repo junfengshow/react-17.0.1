@@ -223,7 +223,7 @@ export function enqueueUpdate<State>(
   }
 
   const sharedQueue: SharedQueue<State> = (updateQueue: any).shared;
-
+  // render: false
   if (isInterleavedUpdate(fiber, lane)) {
     const interleaved = sharedQueue.interleaved;
     if (interleaved === null) {
@@ -475,6 +475,8 @@ export function processUpdateQueue<State>(
 
   // Check if there are pending updates. If so, transfer them to the base queue.
   let pendingQueue = queue.shared.pending;
+  
+  // render: pendingQueue: { ... }, firstBaseUpdate： null
   if (pendingQueue !== null) {
     queue.shared.pending = null;
 

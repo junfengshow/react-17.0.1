@@ -164,10 +164,10 @@ export const enableUseRefAccessWarning = false;
 
 export const enableRecursiveCommitTraversal = false;
 
-export const disableSchedulerTimeoutInWorkLoop = false;
+export const disableSchedulerTimeoutInWorkLoop = true;
 
 export const enableLazyContextPropagation = false;
 
 export const enableSyncDefaultUpdates = true;
 
-export const allowConcurrentByDefault = false;
+export const allowConcurrentByDefault = true;

@@ -331,6 +331,7 @@ function ChildReconciler(shouldTrackSideEffects) {
     }
     const current = newFiber.alternate;
     if (current !== null) {
+      // 复用
       const oldIndex = current.index;
       if (oldIndex < lastPlacedIndex) {
         // This is a move.
@@ -553,9 +554,7 @@ function ChildReconciler(shouldTrackSideEffects) {
     lanes: Lanes,
   ): Fiber | null {
     // Update the fiber if the keys match, otherwise return null.
-
     const key = oldFiber !== null ? oldFiber.key : null;
-
     if (typeof newChild === 'string' || typeof newChild === 'number') {
       // Text nodes don't have keys. If the previous node is implicitly keyed
       // we can continue to replace it without aborting even if it is not a text
@@ -768,18 +767,28 @@ function ChildReconciler(shouldTrackSideEffects) {
     let newIdx = 0;
     let nextOldFiber = null;
     for (; oldFiber !== null && newIdx < newChildren.length; newIdx++) {
+      // 什么情况下会出现呢?
+      // newChildren中存在undefined或者null的时候
       if (oldFiber.index > newIdx) {
         nextOldFiber = oldFiber;
         oldFiber = null;
+        // RenderLogger.tag('reconcileChildrenArray --> oldFiber.index > newIdx')
       } else {
         nextOldFiber = oldFiber.sibling;
       }
+
+      // key不相同返回null
+      // newChild为null 返回null
+      // type相同existing
+      // default createFiberFromElement 
       const newFiber = updateSlot(
         returnFiber,
         oldFiber,
         newChildren[newIdx],
         lanes,
       );
+      RenderLogger.info('newFiber', newFiber)
+      RenderLogger.info('newFiber alternate', newFiber.alternate)
       if (newFiber === null) {
         // TODO: This breaks on empty slots like null children. That's
         // unfortunate because it triggers the slow path all the time. We need
@@ -790,14 +799,20 @@ function ChildReconciler(shouldTrackSideEffects) {
         }
         break;
       }
+
+      // update: true
       if (shouldTrackSideEffects) {
+        // 当前fiber是新建的故而不会存在alternate,也不会复用原数据
+        // 所以老的fiber需要删除掉
         if (oldFiber && newFiber.alternate === null) {
           // We matched the slot, but we didn't reuse the existing fiber, so we
           // need to delete the existing child.
           deleteChild(returnFiber, oldFiber);
         }
       }
+
       lastPlacedIndex = placeChild(newFiber, lastPlacedIndex, newIdx);
+
       if (previousNewFiber === null) {
         // TODO: Move out of the loop. This only happens for the first run.
         resultingFirstChild = newFiber;
@@ -822,6 +837,7 @@ function ChildReconciler(shouldTrackSideEffects) {
       // If we don't have any more existing children we can choose a fast path
       // since the rest will all be insertions.
       for (; newIdx < newChildren.length; newIdx++) {
+        // 会过滤掉 null和undefined
         const newFiber = createChild(returnFiber, newChildren[newIdx], lanes);
         if (newFiber === null) {
           continue;
@@ -835,6 +851,7 @@ function ChildReconciler(shouldTrackSideEffects) {
         }
         previousNewFiber = newFiber;
       }
+      RenderLogger.info('resultingFirstChild', resultingFirstChild);
       return resultingFirstChild;
     }
 
@@ -1131,8 +1148,12 @@ function ChildReconciler(shouldTrackSideEffects) {
               elementType.$$typeof === REACT_LAZY_TYPE &&
               resolveLazy(elementType) === child.type)
           ) {
+            // 这里为何要删除兄弟节点
+            // 因为它是单节点啊，当前的节点是单节点
+            // 假如原来有兄弟节点 说明现在没了，故而需要删除
             deleteRemainingChildren(returnFiber, child.sibling);
             const existing = useFiber(child, element.props);
+            RenderLogger.info('reconcileSingleElement useFiber existing', existing);
             existing.ref = coerceRef(returnFiber, child, element);
             existing.return = returnFiber;
             if (__DEV__) {

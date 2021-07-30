@@ -40,6 +40,9 @@ export function registerTwoPhaseEvent(
   registerDirectEvent(registrationName + 'Capture', dependencies);
 }
 
+// registrationName: onClick、onClickCapture
+// dependencies: ['click']、['click']
+// allNativeEvents: Set { 'click', 'abort' }
 export function registerDirectEvent(
   registrationName: string,
   dependencies: Array<DOMEventName>,

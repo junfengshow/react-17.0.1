@@ -22,6 +22,7 @@ import {
   NormalPriority,
   LowPriority,
   IdlePriority,
+  getPriorityStr,
 } from '../SchedulerPriorities';
 import {
   markTaskRun,
@@ -177,7 +178,10 @@ function flushWork(hasTimeRemaining, initialTime) {
 function workLoop(hasTimeRemaining, initialTime) {
   let currentTime = initialTime;
   advanceTimers(currentTime);
+
+  // heap[0]
   currentTask = peek(taskQueue);
+  SchedulerLogger.info(`workLoop --> currentTask`, currentTask)
   while (
     currentTask !== null &&
     !(enableSchedulerDebugging && isSchedulerPaused)
@@ -197,8 +201,10 @@ function workLoop(hasTimeRemaining, initialTime) {
       if (enableProfiling) {
         markTaskRun(currentTask, currentTime);
       }
+      SchedulerLogger.info('workLoop --> callback', callback)
       const continuationCallback = callback(didUserCallbackTimeout);
       currentTime = getCurrentTime();
+      SchedulerLogger.info('workLoop --> continuationCallback', continuationCallback)
       if (typeof continuationCallback === 'function') {
         currentTask.callback = continuationCallback;
         if (enableProfiling) {
@@ -295,6 +301,9 @@ function unstable_wrapCallback(callback) {
 
 function unstable_scheduleCallback(priorityLevel, callback, options) {
   var currentTime = getCurrentTime();
+  SchedulerLogger.info('unstable_scheduleCallback --> priorityLevel', getPriorityStr(priorityLevel));
+  SchedulerLogger.info('unstable_scheduleCallback --> callback', callback);
+  SchedulerLogger.info('unstable_scheduleCallback --> options', options);
 
   var startTime;
   if (typeof options === 'object' && options !== null) {
@@ -414,6 +423,7 @@ let isMessageLoopRunning = false;
 let scheduledHostCallback = null;
 let taskTimeoutID = -1;
 
+// 1/60 ~ 16.6ms
 // Scheduler periodically yields in case there is other work on the main
 // thread, like user events. By default, it yields multiple times per frame.
 // It does not attempt to align with frame boundaries, since most tasks don't
@@ -427,6 +437,7 @@ const maxYieldInterval = 300;
 let needsPaint = false;
 
 function shouldYieldToHost() {
+  // render: enableIsInputPending false
   if (
     enableIsInputPending &&
     navigator !== undefined &&
@@ -458,6 +469,7 @@ function shouldYieldToHost() {
   } else {
     // `isInputPending` is not available. Since we have no way of knowing if
     // there's pending input, always yield at the end of the frame.
+    SchedulerLogger.info('shouldYieldToHost', `${getCurrentTime()} ~ ${deadline}`)
     return getCurrentTime() >= deadline;
   }
 }
@@ -493,6 +505,9 @@ function forceFrameRate(fps) {
 }
 
 const performWorkUntilDeadline = () => {
+  SchedulerLogger.info(
+    'performWorkUntilDeadline --> scheduledHostCallback', scheduledHostCallback
+  );
   if (scheduledHostCallback !== null) {
     const currentTime = getCurrentTime();
     // Yield after `yieldInterval` ms, regardless of where we are in the vsync
@@ -551,7 +566,18 @@ if (typeof localSetImmediate === 'function') {
   const port = channel.port2;
   channel.port1.onmessage = performWorkUntilDeadline;
   schedulePerformWorkUntilDeadline = () => {
+    SchedulerLogger.step(
+      'channel post message', 
+      'onmessage = performWorkUntilDeadline'
+    );
     port.postMessage(null);
+    // 这里证明 postMessage 比 setTimeout要快一些
+    // setTimeout(() => {
+    //   SchedulerLogger.step(
+    //     'channel post message', 
+    //     'onmessage = performWorkUntilDeadline'
+    //   );
+    // })
   };
 } else {
   // We should only fallback here in non-browser environments.
@@ -581,6 +607,9 @@ function cancelHostTimeout() {
 
 const unstable_requestPaint = requestPaint;
 
+// 为了不报错而加的
+const unstable_flushAllWithoutAsserting = null;
+
 export {
   ImmediatePriority as unstable_ImmediatePriority,
   UserBlockingPriority as unstable_UserBlockingPriority,
@@ -600,6 +629,7 @@ export {
   unstable_getFirstCallbackNode,
   getCurrentTime as unstable_now,
   forceFrameRate as unstable_forceFrameRate,
+  unstable_flushAllWithoutAsserting,
 };
 
 export const unstable_Profiling = enableProfiling

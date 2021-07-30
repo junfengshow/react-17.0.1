@@ -81,7 +81,26 @@ const bundles = [
     global: 'React',
     externals: [],
   },
-
+  /******* React DOM *******/
+  {
+    bundleTypes: [
+      UMD_DEV,
+      UMD_PROD,
+      UMD_PROFILING,
+      NODE_DEV,
+      NODE_PROD,
+      NODE_PROFILING,
+      FB_WWW_DEV,
+      FB_WWW_PROD,
+      FB_WWW_PROFILING,
+    ],
+    moduleType: RENDERER,
+    entry: 'react-dom',
+    global: 'ReactDOM',
+    externals: ['react'],
+  },
+];
+const a = [
   /******* Isomorphic Shared Subset *******/
   {
     bundleTypes: [NODE_DEV, NODE_PROD],
@@ -181,24 +200,7 @@ const bundles = [
     externals: ['react', 'pg'],
   },
 
-  /******* React DOM *******/
-  {
-    bundleTypes: [
-      UMD_DEV,
-      UMD_PROD,
-      UMD_PROFILING,
-      NODE_DEV,
-      NODE_PROD,
-      NODE_PROFILING,
-      FB_WWW_DEV,
-      FB_WWW_PROD,
-      FB_WWW_PROFILING,
-    ],
-    moduleType: RENDERER,
-    entry: 'react-dom',
-    global: 'ReactDOM',
-    externals: ['react'],
-  },
+  
 
   /******* React DOM - www - Uses forked reconciler *******/
   {

@@ -115,7 +115,7 @@ function registerSimpleEvent(domEventName, reactName) {
   registerTwoPhaseEvent(reactName, [domEventName]);
 }
 
-export function registerSimpleEvents() {
+export function registerSimpleEvents(phase) {
   for (let i = 0; i < simpleEventPluginEvents.length; i++) {
     const eventName = ((simpleEventPluginEvents[i]: any): string);
     const domEventName = ((eventName.toLowerCase(): any): DOMEventName);
@@ -130,4 +130,5 @@ export function registerSimpleEvents() {
   registerSimpleEvent('focusin', 'onFocus');
   registerSimpleEvent('focusout', 'onBlur');
   registerSimpleEvent(TRANSITION_END, 'onTransitionEnd');
+  // EventsLogger.step('DOMEventProperties: registerSimpleEvents', phase)
 }

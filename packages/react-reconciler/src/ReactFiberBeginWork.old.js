@@ -1210,6 +1210,7 @@ function updateHostRoot(current, workInProgress, renderLanes) {
     resetHydrationState();
     return bailoutOnAlreadyFinishedWork(current, workInProgress, renderLanes);
   }
+  // render: false
   if (root.hydrate && enterHydrationState(workInProgress)) {
     // If we don't have any current children this might be the first pass.
     // We always try to hydrate. If this isn't a hydration pass there won't
@@ -3125,6 +3126,7 @@ function bailoutOnAlreadyFinishedWork(
   workInProgress: Fiber,
   renderLanes: Lanes,
 ): Fiber | null {
+  RenderLogger.step('bailoutOnAlreadyFinishedWork workInProgress', workInProgress);
   if (current !== null) {
     // Reuse previous dependencies
     workInProgress.dependencies = current.dependencies;
@@ -3142,7 +3144,7 @@ function bailoutOnAlreadyFinishedWork(
     // The children don't have any work either. We can skip them.
     // TODO: Once we add back resuming, we should check if the children are
     // a work-in-progress set. If so, we need to transfer their effects.
-
+    RenderLogger.step('bailoutOnAlreadyFinishedWork !includesSomeLane');
     if (enableLazyContextPropagation && current !== null) {
       // Before bailing out, check if there are any context changes in
       // the children.
@@ -3158,6 +3160,7 @@ function bailoutOnAlreadyFinishedWork(
   // This fiber doesn't have work, but its subtree does. Clone the child
   // fibers and continue.
   cloneChildFibers(current, workInProgress);
+  RenderLogger.step('bailoutOnAlreadyFinishedWork cloneChildFibers', workInProgress);
   return workInProgress.child;
 }
 
@@ -3227,6 +3230,7 @@ function beginWork(
   workInProgress: Fiber,
   renderLanes: Lanes,
 ): Fiber | null {
+  RenderLogger.step('beginWork', workInProgress);
   let updateLanes = workInProgress.lanes;
 
   if (__DEV__) {
@@ -3247,6 +3251,7 @@ function beginWork(
     }
   }
 
+  // update 而不是 mount
   if (current !== null) {
     // TODO: The factoring of this block is weird.
     if (
@@ -3271,6 +3276,11 @@ function beginWork(
       // If props or context changed, mark the fiber as having performed work.
       // This may be unset if the props are determined to be equal later (memo).
       didReceiveUpdate = true;
+      RenderLogger.step(
+        `beginWork didReceiveUpdate --> 
+        oldProps !== newProps || hasLegacyContextChanged()`, 
+        didReceiveUpdate
+      );
     } else if (!includesSomeLane(renderLanes, updateLanes)) {
       didReceiveUpdate = false;
       // This fiber does not have any pending work. Bailout without entering
@@ -3484,22 +3494,39 @@ function beginWork(
           break;
         }
       }
+      RenderLogger.step(
+        `beginWork didReceiveUpdate --> 
+        !(oldProps !== newProps || hasLegacyContextChanged()) &&
+        !includesSomeLane(renderLanes, updateLanes)`, 
+        didReceiveUpdate
+      );
       return bailoutOnAlreadyFinishedWork(current, workInProgress, renderLanes);
     } else {
       if ((current.flags & ForceUpdateForLegacySuspense) !== NoFlags) {
         // This is a special case that only exists for legacy mode.
         // See https://github.com/facebook/react/pull/19216.
         didReceiveUpdate = true;
+        RenderLogger.step(
+          `beginWork didReceiveUpdate --> current !== null 
+          (current.flags & ForceUpdateForLegacySuspense) !== NoFlags`, 
+          didReceiveUpdate
+        );
       } else {
         // An update was scheduled on this fiber, but there are no new props
         // nor legacy context. Set this to false. If an update queue or context
         // consumer produces a changed value, it will set this to true. Otherwise,
         // the component will assume the children have not changed and bail out.
         didReceiveUpdate = false;
+        RenderLogger.step(
+          `beginWork didReceiveUpdate --> current !== null else 中的 else
+          `, 
+          didReceiveUpdate
+        );
       }
     }
   } else {
     didReceiveUpdate = false;
+    RenderLogger.step('beginWork didReceiveUpdate --> currnet === null', didReceiveUpdate);
   }
 
   // Before entering the begin phase, clear pending update priority.
@@ -3508,7 +3535,6 @@ function beginWork(
   // sometimes bails out later in the begin phase. This indicates that we should
   // move this assignment out of the common path and into each branch.
   workInProgress.lanes = NoLanes;
-
   switch (workInProgress.tag) {
     case IndeterminateComponent: {
       return mountIndeterminateComponent(

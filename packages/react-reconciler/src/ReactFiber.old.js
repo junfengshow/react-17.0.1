@@ -53,6 +53,7 @@ import {
   OffscreenComponent,
   LegacyHiddenComponent,
   CacheComponent,
+  getTagStr,
 } from './ReactWorkTags';
 import getComponentNameFromFiber from 'react-reconciler/src/getComponentNameFromFiber';
 
@@ -71,6 +72,7 @@ import {
   StrictLegacyMode,
   StrictEffectsMode,
   ConcurrentUpdatesByDefaultMode,
+  getModeStr,
 } from './ReactTypeOfMode';
 import {
   REACT_FORWARD_REF_TYPE,
@@ -116,6 +118,7 @@ function FiberNode(
 ) {
   // Instance
   this.tag = tag;
+  this.tagStr = getTagStr(tag);
   this.key = key;
   this.elementType = null;
   this.type = null;
@@ -136,6 +139,7 @@ function FiberNode(
   this.dependencies = null;
 
   this.mode = mode;
+  this.modeStr = getModeStr(mode);
 
   // Effects
   this.flags = NoFlags;
@@ -240,6 +244,7 @@ export function resolveLazyComponentTag(Component: Function): WorkTag {
 
 // This is used to create an alternate fiber to do work on.
 export function createWorkInProgress(current: Fiber, pendingProps: any): Fiber {
+  // 双缓存
   let workInProgress = current.alternate;
   if (workInProgress === null) {
     // We use a double buffering pooling technique because we know that we'll
@@ -454,7 +459,6 @@ export function createHostRootFiber(
     // Without some nodes in the tree having empty base times.
     mode |= ProfileMode;
   }
-
   return createFiber(HostRoot, null, null, mode);
 }
 

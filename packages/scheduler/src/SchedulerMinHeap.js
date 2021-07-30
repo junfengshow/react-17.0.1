@@ -39,6 +39,8 @@ export function pop(heap: Heap): Node | null {
 function siftUp(heap, node, i) {
   let index = i;
   while (index > 0) {
+    // 无符号向右移动一位
+    // 等同于 除以 2 并取整
     const parentIndex = (index - 1) >>> 1;
     const parent = heap[parentIndex];
     if (compare(parent, node) > 0) {

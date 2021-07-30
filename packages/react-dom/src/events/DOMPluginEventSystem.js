@@ -83,13 +83,22 @@ type DispatchEntry = {|
 |};
 
 export type DispatchQueue = Array<DispatchEntry>;
-
+EventsLogger.step('DOMPluginEventSystem', `
+  插件注入(
+    SimpleEventPlugin、
+    EnterLeaveEventPlugin、
+    ChangeEventPlugin、
+    SelectEventPlugin、
+    BeforeInputEventPlugin
+  )
+`)
 // TODO: remove top-level side effect.
-SimpleEventPlugin.registerEvents();
-EnterLeaveEventPlugin.registerEvents();
-ChangeEventPlugin.registerEvents();
-SelectEventPlugin.registerEvents();
-BeforeInputEventPlugin.registerEvents();
+// 这里调用函数时的参数是我为了打印日志而加的。
+SimpleEventPlugin.registerEvents('SimpleEventPlugin');
+EnterLeaveEventPlugin.registerEvents('EnterLeaveEventPlugin');
+ChangeEventPlugin.registerEvents('ChangeEventPlugin');
+SelectEventPlugin.registerEvents('SelectEventPlugin');
+BeforeInputEventPlugin.registerEvents('BeforeInputEventPlugin');
 
 function extractEvents(
   dispatchQueue: DispatchQueue,

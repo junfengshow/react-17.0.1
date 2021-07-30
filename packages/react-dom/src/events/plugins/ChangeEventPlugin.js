@@ -30,7 +30,7 @@ import {
   accumulateTwoPhaseListeners,
 } from '../DOMPluginEventSystem';
 
-function registerEvents() {
+function registerEvents(phase) {
   registerTwoPhaseEvent('onChange', [
     'change',
     'click',
@@ -41,6 +41,7 @@ function registerEvents() {
     'keyup',
     'selectionchange',
   ]);
+  // EventsLogger.step('ChangeEventPlugin: registerSimpleEvents', phase)
 }
 
 function createAndAccumulateChangeEvent(

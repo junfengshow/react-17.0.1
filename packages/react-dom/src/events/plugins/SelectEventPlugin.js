@@ -27,7 +27,7 @@ import {accumulateTwoPhaseListeners} from '../DOMPluginEventSystem';
 const skipSelectionChangeEvent =
   canUseDOM && 'documentMode' in document && document.documentMode <= 11;
 
-function registerEvents() {
+function registerEvents(phase) {
   registerTwoPhaseEvent('onSelect', [
     'focusout',
     'contextmenu',
@@ -39,6 +39,7 @@ function registerEvents() {
     'mouseup',
     'selectionchange',
   ]);
+  // EventsLogger.step('SelectEventPlugin: registerSimpleEvents', phase)
 }
 
 let activeElement = null;

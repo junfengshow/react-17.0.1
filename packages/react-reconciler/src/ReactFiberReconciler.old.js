@@ -271,6 +271,7 @@ export function updateContainer(
     onScheduleRoot(container, element);
   }
   const current = container.current;
+  // now()
   const eventTime = requestEventTime();
   if (__DEV__) {
     // $FlowExpectedError - jest isn't a global, and isn't recognized outside of tests
@@ -280,7 +281,7 @@ export function updateContainer(
     }
   }
   const lane = requestUpdateLane(current);
-
+  // render: true
   if (enableSchedulingProfiler) {
     markRenderScheduled(lane);
   }
@@ -327,7 +328,7 @@ export function updateContainer(
     }
     update.callback = callback;
   }
-
+  // 将更新添加到队列
   enqueueUpdate(current, update, lane);
   const root = scheduleUpdateOnFiber(current, lane, eventTime);
   if (root !== null) {
