@@ -54,10 +54,10 @@
         value,
         onChange: this.onChange,
         placeholder: '请输入名称',
-        // key: '1001'
+        key: '1001'
       }),
       React.createElement('div', { 
-        // key: '1002' 
+        key: '1002' 
       }, 'hello world')
     ];
   }
@@ -194,10 +194,10 @@
         value: this.state.value,
         onChange: this.onChange,
         placeholder: 'input something',
-        // key: '1001'
+        key: '1001'
       }),
       React.createElement('div', { 
-        // key: '1002' 
+        key: '1002' 
       }, 'hello world'),
     ]
     : [
@@ -206,13 +206,13 @@
         value: this.state.value,
         onChange: this.onChange,
         placeholder: 'input something',
-        // key: '1001'
+        key: '1001'
       }),
       React.createElement('div', { 
-        // key: '1002' 
+        key: '1002' 
       }, 'hello world'),
       React.createElement('div', { 
-        // key: '1002' 
+        key: '1002' 
       }, 'add line'),
     ];
   }

@@ -191,6 +191,8 @@ let appendAllChildren;
 let updateHostContainer;
 let updateHostComponent;
 let updateHostText;
+
+// true
 if (supportsMutation) {
   // Mutation mode
 
@@ -672,6 +674,7 @@ function bubbleProperties(completedWork: Fiber) {
 
   if (!didBailout) {
     // Bubble up the earliest expiration time.
+    // false
     if (enableProfilerTimer && (completedWork.mode & ProfileMode) !== NoMode) {
       // In profiling mode, resetChildExpirationTime is also used to reset
       // profiler durations.
