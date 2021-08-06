@@ -102,30 +102,8 @@
 
   // ----------------------------------------------------------------------
   // 测试hooks
-  function ComponentWrap (props, context) {
-    this.state = { count: 1 }
-  }
-  extendsFunc(Component, ComponentWrap)
-  
-  ComponentWrap.prototype.componentDidMount = function () {
-    // this.setState({ count: 2 })
-    // this.setState({ count: 3 })
-  }
-  ComponentWrap.prototype.render = function () {
-    const { count } = this.state
-    return React.createElement(ShowCountWrap, { count })
-  }
-
-  // input
-  function ShowCount ({ onChange, value }) {
-    return React.createElement('input', {
-      onChange,
-      value 
-    })
-  }
-  // div
-  function ShowCountWrap (props) {
-    const [count, setCount] = useState(1)
+  function HooksDemoCount (props) {
+    const [count, setCount] = useState()
 
     // useEffect(() => {
     //   Logger.step('useEffect', 'sync')
@@ -133,22 +111,49 @@
 
     const onChange = (e) => {
       const _v = e.target.value
-      setCount(_v)
-      setCount(_v)
-      setCount(_v)
+      setCount(_v);
     }
 
     return React.createElement('div', {
       className: 'click-container',
     }, [
-      React.createElement(
-        ShowCount, 
-        { key: '1', value: count, onChange }
-      ),
+      React.createElement('input', { key: '1', value: count, onChange, placeholder: '请输入' }),
       React.createElement( 'div', { key: '2' }, props.count)
     ])
   }
-  // ReactDOM.render(React.createElement(ComponentWrap), node)
+  class HooksDemo extends Component {
+    constructor(props) {
+      super(props);
+      this.state = {
+        value: ''
+      }
+    }
+
+    componentDidMount () {}
+    onChange () {}
+    render () {
+      return (
+        React.createElement(HooksDemoCount, { count: 1 })
+      )
+    }
+  }
+  // ReactDOM.createRoot(node, {
+  //   unstable_concurrentUpdatesByDefault: true
+  // }).render(React.createElement(HooksDemo));
+
+  // ----------------------------------------------------------------------
+  // concurrent模式 最简单的Hook
+  function JustHookDemo () {
+    const [value, setValue] = useState('');
+    const onChange = (e) => {
+      const val = e.target.value;
+      setValue(val);
+    }
+    return React.createElement('input', { value, placeholder: '请输入', onChange })
+  }
+  ReactDOM.createRoot(node, {
+    unstable_concurrentUpdatesByDefault: true
+  }).render(React.createElement(JustHookDemo));
 
   // ----------------------------------------------------------------------
   // concurrent模式
@@ -219,9 +224,9 @@
   DiffDemo.prototype.componentDidMount = function () {
     MainLogger.step('componentDidMount', 'componentDidMount')
   }
-  ReactDOM.createRoot(node, {
-    unstable_concurrentUpdatesByDefault: true
-  }).render(React.createElement(DiffDemo));
+  // ReactDOM.createRoot(node, {
+  //   unstable_concurrentUpdatesByDefault: true
+  // }).render(React.createElement(DiffDemo));
 })();
 
 // ;(function () {

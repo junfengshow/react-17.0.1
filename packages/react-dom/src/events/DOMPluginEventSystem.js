@@ -451,7 +451,7 @@ function addTrappedEventListener(
 
   targetContainer =
     enableLegacyFBSupport && isDeferredListenerForLegacyFBSupport
-      ? (targetContainer: any).ownerDocument
+      ? targetContainer.ownerDocument
       : targetContainer;
 
   let unsubscribeListener;
@@ -467,6 +467,7 @@ function addTrappedEventListener(
   // to support legacy code patterns, it's likely they'll
   // need support for such browsers.
   if (enableLegacyFBSupport && isDeferredListenerForLegacyFBSupport) {
+    EventsLogger.tag(`enableLegacyFBSupport && isDeferredListenerForLegacyFBSupport: true`)
     const originalListener = listener;
     listener = function(...p) {
       removeEventListener(

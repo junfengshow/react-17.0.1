@@ -83,10 +83,10 @@ a {
   border-bottom-color: #FF7559;
 }
 .page-line-title-green {
-  color: #ae81ff;
+  color: #aaa;
 }
 .page-line-color-green:after {
-  border-bottom-color: #ae81ff;
+  border-bottom-color: #aaa;
 }
 
 .code-wrap {
@@ -259,4 +259,9 @@ table > tbody > tr > td {
   font-size: 14px;
   cursor: pointer;
   display: block;
+}
+
+body input {
+  width: 100%;
+  box-sizing: border-box;
 }

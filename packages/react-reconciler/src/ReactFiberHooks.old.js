@@ -782,7 +782,7 @@ function updateReducer<S, I, A>(
           action: update.action,
           eagerReducer: update.eagerReducer,
           eagerState: update.eagerState,
-          next: (null: any),
+          next: null,
         };
         if (newBaseQueueLast === null) {
           newBaseQueueFirst = newBaseQueueLast = clone;
@@ -800,7 +800,6 @@ function updateReducer<S, I, A>(
         markSkippedUpdateLanes(updateLane);
       } else {
         // This update does have sufficient priority.
-
         if (newBaseQueueLast !== null) {
           const clone: Update<S, A> = {
             // This update is going to be committed so we never want uncommit
@@ -860,7 +859,7 @@ function updateReducer<S, I, A>(
         interleavedLane,
       );
       markSkippedUpdateLanes(interleavedLane);
-      interleaved = ((interleaved: any).next: Update<S, A>);
+      interleaved = (interleaved.next: Update<S, A>);
     } while (interleaved !== lastInterleaved);
   } else if (baseQueue === null) {
     // `queue.lanes` is used for entangling transitions. We can set it back to
@@ -1272,6 +1271,7 @@ function mountState<S>(
 function updateState<S>(
   initialState: (() => S) | S,
 ): [S, Dispatch<BasicStateAction<S>>] {
+  HooksLogger.step('updateState --> initialState', initialState)
   return updateReducer(basicStateReducer, (initialState: any));
 }
 
@@ -1922,14 +1922,22 @@ function dispatchAction<S, A>(
     action,
     eagerReducer: null,
     eagerState: null,
-    next: (null: any),
+    next: null,
   };
 
   const alternate = fiber.alternate;
+  // todo
+  // 什么情况下这里会是true呢?
   if (
     fiber === currentlyRenderingFiber ||
     (alternate !== null && alternate === currentlyRenderingFiber)
   ) {
+    HooksLogger.tag(`
+      dispatchAction -->
+      fiber === currentlyRenderingFiber ||
+      (alternate !== null && alternate === currentlyRenderingFiber): 
+      ${fiber === currentlyRenderingFiber || (alternate !== null && alternate === currentlyRenderingFiber)}
+    `);
     // This is a render phase update. Stash it in a lazily-created map of
     // queue -> linked list of updates. After this render pass, we'll restart
     // and apply the stashed updates on top of the work-in-progress hook.
@@ -1944,6 +1952,7 @@ function dispatchAction<S, A>(
     }
     queue.pending = update;
   } else {
+    HooksLogger.step('dispatchAction --> isInterleavedUpdate', isInterleavedUpdate(fiber, lane))
     if (isInterleavedUpdate(fiber, lane)) {
       const interleaved = queue.interleaved;
       if (interleaved === null) {
@@ -1973,10 +1982,12 @@ function dispatchAction<S, A>(
       fiber.lanes === NoLanes &&
       (alternate === null || alternate.lanes === NoLanes)
     ) {
+      
       // The queue is currently empty, which means we can eagerly compute the
       // next state before entering the render phase. If the new state is the
       // same as the current state, we may be able to bail out entirely.
       const lastRenderedReducer = queue.lastRenderedReducer;
+      HooksLogger.step('dispatchAction --> lastRenderedReducer', lastRenderedReducer);
       if (lastRenderedReducer !== null) {
         let prevDispatcher;
         if (__DEV__) {

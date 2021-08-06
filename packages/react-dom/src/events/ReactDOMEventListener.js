@@ -86,6 +86,7 @@ export function createEventListenerWrapperWithPriority(
 ): Function {
   const eventPriority = getEventPriority(domEventName);
   let listenerWrapper;
+
   switch (eventPriority) {
     case DiscreteEventPriority:
       listenerWrapper = dispatchDiscreteEvent;
@@ -112,6 +113,7 @@ function dispatchDiscreteEvent(
   container,
   nativeEvent,
 ) {
+  // EventsLogger.step('dispatchDiscreteEvent --> domEventName', domEventName);
   discreteUpdates(
     dispatchEvent,
     domEventName,

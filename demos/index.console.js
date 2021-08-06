@@ -359,7 +359,9 @@ var showChild = function () {}
     isRender: true
   }
   // commit阶段
-  wid.CommitLogger = composeMethods(methods, true)
+  wid.CommitLogger = composeMethods(methods, true);
+  // hooks 
+  wid.HooksLogger = composeMethods(methods, true);
 
   // ---------------------------------------------------------
   document.addEventListener('DOMContentLoaded', function () {

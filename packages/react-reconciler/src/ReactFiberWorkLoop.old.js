@@ -721,11 +721,18 @@ function ensureRootIsScheduled(root: FiberRoot, currentTime: number) {
     // Special case: Sync React callbacks are scheduled on a special
     // internal queue
     //  setState: false
+    MainLogger.step(
+      `newCallbackPriority === SyncLane true根据条件执行不同函数`,
+      `root.tag === LegacyRoot: ${root.tag === LegacyRoot}; 
+      supportsMicrotasks: ${supportsMicrotasks}
+      `
+    );
     if (root.tag === LegacyRoot) {
       scheduleLegacySyncCallback(performSyncWorkOnRoot.bind(null, root));
     } else {
       scheduleSyncCallback(performSyncWorkOnRoot.bind(null, root));
     }
+    
     if (supportsMicrotasks) {
       // Flush the queue in a microtask.
       scheduleMicrotask(flushSyncCallbacks);
@@ -754,6 +761,10 @@ function ensureRootIsScheduled(root: FiberRoot, currentTime: number) {
         schedulerPriorityLevel = NormalSchedulerPriority;
         break;
     }
+    MainLogger.step(
+      `newCallbackPriority === SyncLane false`,
+      `执行scheduleCallback函数`
+    );
     newCallbackNode = scheduleCallback(
       schedulerPriorityLevel,
       performConcurrentWorkOnRoot.bind(null, root),
@@ -1454,7 +1465,7 @@ export function renderHasNotSuspendedYet(): boolean {
 }
 
 function renderRootSync(root: FiberRoot, lanes: Lanes) {
-  MainLogger.tag('renderRootSync render阶段 --> lanes = ' + lanes);
+  MainLogger.tag('renderRootSync 同步render阶段 --> lanes = ' + lanes);
   const prevExecutionContext = executionContext;
   executionContext |= RenderContext;
   const prevDispatcher = pushDispatcher();
