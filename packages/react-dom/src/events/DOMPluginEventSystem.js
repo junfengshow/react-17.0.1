@@ -396,10 +396,20 @@ export function listenToAllSupportedEvents(rootContainerElement: EventTarget) {
     allNativeEvents.forEach(domEventName => {
       // We handle selectionchange separately because it
       // doesn't bubble and needs to be on the document.
-      if (domEventName !== 'selectionchange') {
+      if (
+        domEventName !== 'selectionchange' &&
+        (
+          // domEventName === 'change'
+          domEventName === 'click' 
+          // domEventName === 'invalid' 
+        ) // 自己加的跳过大部分绑定,利于查看日志
+      ) {
+        // 冒泡
         if (!nonDelegatedEvents.has(domEventName)) {
+          // 先注释掉
           listenToNativeEvent(domEventName, false, rootContainerElement);
         }
+        // 捕获
         listenToNativeEvent(domEventName, true, rootContainerElement);
       }
     });
@@ -412,7 +422,7 @@ export function listenToAllSupportedEvents(rootContainerElement: EventTarget) {
       // but it is attached to the document.
       if (!(ownerDocument: any)[listeningMarker]) {
         (ownerDocument: any)[listeningMarker] = true;
-        listenToNativeEvent('selectionchange', false, ownerDocument);
+        // listenToNativeEvent('selectionchange', false, ownerDocument);
       }
     }
   }

@@ -1,7 +1,6 @@
-
+const node = document.getElementById('app');
+const node2 = document.getElementById('app2');
 ;(function () {
-  const node = document.getElementById('app')
-  const node2 = document.getElementById('app2')
   const { useState, useEffect, Component, clone } = React
   let array = new Array(1000).fill(1000);
   function extendsFunc (Parent, Child) {
@@ -151,9 +150,9 @@
     }
     return React.createElement('input', { value, placeholder: '请输入', onChange })
   }
-  ReactDOM.createRoot(node, {
-    unstable_concurrentUpdatesByDefault: true
-  }).render(React.createElement(JustHookDemo));
+  // ReactDOM.createRoot(node, {
+  //   unstable_concurrentUpdatesByDefault: true
+  // }).render(React.createElement(JustHookDemo));
 
   // ----------------------------------------------------------------------
   // concurrent模式
@@ -227,6 +226,53 @@
   // ReactDOM.createRoot(node, {
   //   unstable_concurrentUpdatesByDefault: true
   // }).render(React.createElement(DiffDemo));
+})();
+
+// 事件 -- 捕获/冒泡
+;(() => {
+  function EventsDemo () {
+    const isCapture = false;
+    const { useRef, useEffect, useState } = React;
+    const wrapRef = useRef(null);
+    const innerRef = useRef(null);
+    const [count, setCount] = useState(0);
+
+    useEffect(() => {
+      node.addEventListener('click', function () {
+        EventsLogger.step('native click', 'container')
+      })
+      wrapRef.current.addEventListener('click', function () {
+        EventsLogger.step('native click', 'wrap')
+        // setCount(count + 1)
+      }, isCapture);
+      innerRef.current.addEventListener('click', function () {
+        EventsLogger.step('native click', 'inner')
+        // setCount(count + 1)
+      }, isCapture);
+    }, [])
+
+    // react 合成事件
+    const clickWrap = () => {
+      EventsLogger.step('react click', 'wrap')
+      // setCount(count + 1)
+    }
+    const clickInnner = () => {
+      EventsLogger.step('react click', 'inner')
+      // setCount(count + 1)
+    }
+    return (
+      React.createElement('div', {
+        [isCapture?'onClickCapture':'onClick']: clickWrap,
+        ref: wrapRef,
+      }, React.createElement('a', {
+        [isCapture?'onClickCapture':'onClick']: clickInnner,
+        ref: innerRef,
+      }, 'aaaa: ' + count))
+    );
+  }
+  ReactDOM.createRoot(node, {
+    unstable_concurrentUpdatesByDefault: true
+  }).render(React.createElement(EventsDemo));
 })();
 
 // ;(function () {

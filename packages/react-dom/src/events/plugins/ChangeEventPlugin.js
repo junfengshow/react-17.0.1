@@ -280,7 +280,6 @@ function extractEvents(
   targetContainer: null | EventTarget,
 ) {
   const targetNode = targetInst ? getNodeFromInstance(targetInst) : window;
-
   let getTargetInstFunc, handleEventFunc;
   if (shouldUseChangeEvent(targetNode)) {
     getTargetInstFunc = getTargetInstForChangeEvent;
@@ -297,6 +296,7 @@ function extractEvents(
 
   if (getTargetInstFunc) {
     const inst = getTargetInstFunc(domEventName, targetInst);
+    // EventsLogger.step('extractEvents --> getTargetInstForInputOrChangeEvent', inst)
     if (inst) {
       createAndAccumulateChangeEvent(
         dispatchQueue,
