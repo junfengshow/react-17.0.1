@@ -316,6 +316,7 @@ function setInitialDOMProperties(
       // adding a special case here, but then it wouldn't be emitted
       // on server rendering (but we *do* want to emit it in SSR).
     } else if (registrationNameDependencies.hasOwnProperty(propKey)) {
+      // nextProp: function
       if (nextProp != null) {
         if (__DEV__ && typeof nextProp !== 'function') {
           warnForInvalidEventListener(propKey, nextProp);
@@ -568,13 +569,13 @@ export function setInitialProperties(
     case 'input':
       // TODO: Make sure we check if this is still unmounted or do any clean
       // up necessary since we never stop tracking anymore.
-      track((domElement: any));
+      track(domElement);
       ReactDOMInputPostMountWrapper(domElement, rawProps, false);
       break;
     case 'textarea':
       // TODO: Make sure we check if this is still unmounted or do any clean
       // up necessary since we never stop tracking anymore.
-      track((domElement: any));
+      track(domElement);
       ReactDOMTextareaPostMountWrapper(domElement, rawProps);
       break;
     case 'option':

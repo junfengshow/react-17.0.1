@@ -350,13 +350,13 @@ var showChild = function () {}
   // 主流程
   wid.MainLogger = composeMethods(methods, true)
   // events
-  wid.EventsLogger = composeMethods(methods, true)
+  wid.EventsLogger = composeMethods(methods, false)
   // scheduler
   wid.SchedulerLogger = composeMethods(methods, true)
   // render阶段
   wid.RenderLogger = {
     ...composeMethods(methods, true),
-    isRender: true
+    isRender: false
   }
   // commit阶段
   wid.CommitLogger = composeMethods(methods, true);

@@ -1501,6 +1501,7 @@ function renderRootConcurrent(root: FiberRoot, lanes: Lanes) {
     }
 
     resetRenderTimer();
+    // 创建 workInProgress
     prepareFreshStack(root, lanes);
   }
 

@@ -86,16 +86,19 @@ export function createEventListenerWrapperWithPriority(
 ): Function {
   const eventPriority = getEventPriority(domEventName);
   let listenerWrapper;
-
   switch (eventPriority) {
     case DiscreteEventPriority:
+      // input: onChange
+      EventsLogger.step('createEventListenerWrapperWithPriority', 'DiscreteEventPriority')
       listenerWrapper = dispatchDiscreteEvent;
       break;
     case ContinuousEventPriority:
+      EventsLogger.step('createEventListenerWrapperWithPriority', 'ContinuousEventPriority')
       listenerWrapper = dispatchContinuousEvent;
       break;
     case DefaultEventPriority:
     default:
+      EventsLogger.step('createEventListenerWrapperWithPriority', 'default')
       listenerWrapper = dispatchEvent;
       break;
   }
@@ -147,7 +150,9 @@ export function dispatchEvent(
   targetContainer: EventTarget,
   nativeEvent: AnyNativeEvent,
 ): void {
+  EventsLogger.line('dispatchEvent');
   if (!_enabled) {
+    EventsLogger.line('dispatchEvent 因!_enabled而结束', true);
     return;
   }
 
@@ -157,7 +162,8 @@ export function dispatchEvent(
   // In eager mode, we attach capture listeners early, so we need
   // to filter them out until we fix the logic to handle them correctly.
   const allowReplay = (eventSystemFlags & IS_CAPTURE_PHASE) === 0;
-
+  
+  // input: onChange: false
   if (
     allowReplay &&
     hasQueuedDiscreteEvents() &&
@@ -173,6 +179,7 @@ export function dispatchEvent(
       targetContainer,
       nativeEvent,
     );
+    EventsLogger.line('dispatchEvent 因allowReplay && hasQueuedDiscreteEvents() && isReplayableDiscreteEvent(domEventName)而结束', true);
     return;
   }
 
@@ -188,6 +195,7 @@ export function dispatchEvent(
     if (allowReplay) {
       clearIfContinuousEvent(domEventName, nativeEvent);
     }
+    EventsLogger.line('dispatchEvent 因blockedOn === null而结束', true);
     return;
   }
 
@@ -201,6 +209,7 @@ export function dispatchEvent(
         targetContainer,
         nativeEvent,
       );
+      EventsLogger.line('dispatchEvent 因allowReplay&&isReplayableDiscreteEvent(domEventName)而结束', true);
       return;
     }
     if (
@@ -212,6 +221,7 @@ export function dispatchEvent(
         nativeEvent,
       )
     ) {
+      EventsLogger.line('dispatchEvent 因allowReplay&&queueIfContinuousEvent而结束', true);
       return;
     }
     // We need to clear only if we didn't queue because
@@ -228,6 +238,7 @@ export function dispatchEvent(
     null,
     targetContainer,
   );
+  EventsLogger.line('dispatchEvent 正常结束', true);
 }
 
 // Attempt dispatching an event. Returns a SuspenseInstance or Container if it's blocked.
@@ -238,8 +249,9 @@ export function attemptToDispatchEvent(
   nativeEvent: AnyNativeEvent,
 ): null | Container | SuspenseInstance {
   // TODO: Warn if _enabled is false.
-
+  // 通过事件对象去获取dom元素
   const nativeEventTarget = getEventTarget(nativeEvent);
+  // 获取dom节点对应的FiberNode实例
   let targetInst = getClosestInstanceFromNode(nativeEventTarget);
 
   if (targetInst !== null) {
@@ -279,6 +291,7 @@ export function attemptToDispatchEvent(
       }
     }
   }
+  EventsLogger.step('attemptToDispatchEvent --> targetInst', targetInst)
   dispatchEventForPluginEventSystem(
     domEventName,
     eventSystemFlags,

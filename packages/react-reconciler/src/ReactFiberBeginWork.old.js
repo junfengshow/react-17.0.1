@@ -3526,7 +3526,7 @@ function beginWork(
     }
   } else {
     didReceiveUpdate = false;
-    RenderLogger.step('beginWork didReceiveUpdate --> currnet === null', didReceiveUpdate);
+    RenderLogger.step('beginWork didReceiveUpdate --> current === null', didReceiveUpdate);
   }
 
   // Before entering the begin phase, clear pending update priority.
