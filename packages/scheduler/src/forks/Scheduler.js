@@ -331,8 +331,9 @@ function unstable_scheduleCallback(priorityLevel, callback, options) {
     case LowPriority:
       timeout = LOW_PRIORITY_TIMEOUT;
       break;
-    case NormalPriority:
+    case NormalPriority: 
     default:
+      // 5000
       timeout = NORMAL_PRIORITY_TIMEOUT;
       break;
   }
@@ -351,6 +352,8 @@ function unstable_scheduleCallback(priorityLevel, callback, options) {
     newTask.isQueued = false;
   }
 
+  // ImmediatePriority 就开始时间比当前时间小
+  // 故而需要立即执行
   if (startTime > currentTime) {
     // This is a delayed task.
     newTask.sortIndex = startTime;
@@ -380,7 +383,6 @@ function unstable_scheduleCallback(priorityLevel, callback, options) {
       requestHostCallback(flushWork);
     }
   }
-
   return newTask;
 }
 

@@ -563,8 +563,7 @@ export function dispatchEventForPluginEventSystem(
     (eventSystemFlags & IS_EVENT_HANDLE_NON_MANAGED_NODE) === 0 &&
     (eventSystemFlags & IS_NON_DELEGATED) === 0
   ) {
-    const targetContainerNode = ((targetContainer: any): Node);
-
+    const targetContainerNode = targetContainer;
     // If we are using the legacy FB support flag, we
     // defer the event to the null with a one
     // time event listener so we can defer the event.
@@ -579,6 +578,8 @@ export function dispatchEventForPluginEventSystem(
       (eventSystemFlags & SHOULD_NOT_DEFER_CLICK_FOR_FB_SUPPORT_MODE) === 0
     ) {
       deferClickToDocumentForLegacyFBSupport(domEventName, targetContainer);
+      EventsLogger.step(`enableLegacyFBSupport &&domEventName === 'click' &&
+      (eventSystemFlags & SHOULD_NOT_DEFER_CLICK_FOR_FB_SUPPORT_MODE) === 0`)
       return;
     }
     if (targetInst !== null) {

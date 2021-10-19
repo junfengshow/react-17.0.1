@@ -249,8 +249,9 @@ export function attemptToDispatchEvent(
   nativeEvent: AnyNativeEvent,
 ): null | Container | SuspenseInstance {
   // TODO: Warn if _enabled is false.
-
+  // 通过事件对象去获取dom元素
   const nativeEventTarget = getEventTarget(nativeEvent);
+  // 获取dom节点对应的FiberNode实例
   let targetInst = getClosestInstanceFromNode(nativeEventTarget);
 
   if (targetInst !== null) {

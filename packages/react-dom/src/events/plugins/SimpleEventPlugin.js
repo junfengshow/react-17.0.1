@@ -159,6 +159,10 @@ function extractEvents(
   }
 
   const inCapturePhase = (eventSystemFlags & IS_CAPTURE_PHASE) !== 0;
+  // EventsLogger.tag(`enableCreateEventHandleAPI &&
+  // eventSystemFlags & IS_EVENT_HANDLE_NON_MANAGED_NODE: `+ (enableCreateEventHandleAPI &&
+  // eventSystemFlags & IS_EVENT_HANDLE_NON_MANAGED_NODE))
+  // false
   if (
     enableCreateEventHandleAPI &&
     eventSystemFlags & IS_EVENT_HANDLE_NON_MANAGED_NODE

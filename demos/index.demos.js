@@ -97,7 +97,9 @@ const node2 = document.getElementById('app2');
     console.log(prevProps, prevState)
   }
   // 测试setState
-  // ReactDOM.render(React.createElement(ShowAge), node)
+  ReactDOM.createRoot(node, {
+    unstable_concurrentUpdatesByDefault: true
+  }).render(React.createElement(ShowAge));
 
   // ----------------------------------------------------------------------
   // 测试hooks
@@ -270,9 +272,9 @@ const node2 = document.getElementById('app2');
       }, 'aaaa: ' + count))
     );
   }
-  ReactDOM.createRoot(node, {
-    unstable_concurrentUpdatesByDefault: true
-  }).render(React.createElement(EventsDemo));
+  // ReactDOM.createRoot(node, {
+  //   unstable_concurrentUpdatesByDefault: true
+  // }).render(React.createElement(EventsDemo));
 })();
 
 // ;(function () {
