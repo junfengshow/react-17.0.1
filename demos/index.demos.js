@@ -1,7 +1,8 @@
 const node = document.getElementById('app');
 const node2 = document.getElementById('app2');
+const { useState, useEffect, Component, clone, createContext } = React
+
 ;(function () {
-  const { useState, useEffect, Component, clone } = React
   let array = new Array(1000).fill(1000);
   function extendsFunc (Parent, Child) {
     Child.prototype = new Parent();
@@ -68,11 +69,14 @@ const node2 = document.getElementById('app2');
   //   unstable_concurrentUpdatesByDefault: true
   // }).render(React.createElement(InputDemo));
 
+
+  const Context = createContext();
   function ShowAge () {
     this.state = {
       age: 0, gender: 0
     }
   }
+  ShowAge.contextType = Context;
   extendsFunc(Component, ShowAge)
   ShowAge.prototype.onClick = function () {
     this.setState({
@@ -84,22 +88,35 @@ const node2 = document.getElementById('app2');
   }
   ShowAge.prototype.render = function () {
     const { age, gender } = this.state
-    Logger.info('render age: ', this.state.age)
-    return React.createElement('div', {
-      onClick: this.onClick.bind(this)
-    }, `age: ${age} -- gender: ${gender}`)
+    // console.log('context', this.context) 
+    // {name:"zhangsan"}
+    return React.createElement(
+      'a', 
+      {
+        onClick: this.onClick.bind(this)
+      }, 
+      `age: ${age} -- gender: ${gender}`
+    );
   }
   ShowAge.prototype.componentDidMount = function () {
-    
+    MainLogger.tag('----------componentDidMount---------')
   }
   ShowAge.prototype.componentDidUpdate = function (prevProps, prevState) {
-    console.log('----------componentDidUpdate---------')
-    console.log(prevProps, prevState)
+    MainLogger.tag('----------componentDidUpdate---------')
+    // MainLogger.info(prevProps, prevState)
   }
   // 测试setState
   ReactDOM.createRoot(node, {
     unstable_concurrentUpdatesByDefault: true
-  }).render(React.createElement(ShowAge));
+  }).render(
+    React.createElement(
+      Context.Provider, 
+      {
+        value: {name: 'zhangsan'}
+      }, 
+      React.createElement(ShowAge)
+    )
+  );
 
   // ----------------------------------------------------------------------
   // 测试hooks

@@ -878,6 +878,7 @@ function performConcurrentWorkOnRoot(root, didTimeout) {
     const finishedWork: Fiber = (root.current.alternate: any);
     root.finishedWork = finishedWork;
     root.finishedLanes = lanes;
+    // 开启 commit 阶段
     finishConcurrentRender(root, exitStatus, lanes);
   }
 

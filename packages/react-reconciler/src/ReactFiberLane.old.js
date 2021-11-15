@@ -249,6 +249,7 @@ export function getNextLanes(root: FiberRoot, wipLanes: Lanes): Lanes {
       (nextLane === DefaultLane && (wipLane & TransitionLanes) !== NoLanes)
     ) {
       // Keep working on the existing in-progress tree. Do not interrupt.
+      MainLogger.tag(`getNextLanes: wipLanes`);
       return wipLanes;
     }
   }
