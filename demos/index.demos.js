@@ -1,5 +1,6 @@
 const node = document.getElementById('app');
 const node2 = document.getElementById('app2');
+<<<<<<< HEAD
 const { useState, useEffect, Component } = React;
 let array = new Array(1000).fill(1000);
 function extendsFunc (Parent, Child) {
@@ -8,6 +9,16 @@ function extendsFunc (Parent, Child) {
 }
 
 ;(function () {
+=======
+const { useState, useEffect, Component, clone, createContext } = React
+
+;(function () {
+  let array = new Array(1000).fill(1000);
+  function extendsFunc (Parent, Child) {
+    Child.prototype = new Parent();
+    Child.constructor = Child;
+  }
+>>>>>>> 85d19f46ab74e1c17e9fba35b529a15163b3ede9
 
   // 最简单的方式
 
@@ -69,11 +80,14 @@ function extendsFunc (Parent, Child) {
   //   unstable_concurrentUpdatesByDefault: true
   // }).render(React.createElement(InputDemo));
 
+
+  // const Context = createContext();
   function ShowAge () {
     this.state = {
       age: 0, gender: 0
     }
   }
+  // ShowAge.contextType = Context;
   extendsFunc(Component, ShowAge)
   ShowAge.prototype.onClick = function () {
     this.setState({
@@ -85,22 +99,51 @@ function extendsFunc (Parent, Child) {
   }
   ShowAge.prototype.render = function () {
     const { age, gender } = this.state
-    Logger.info('render age: ', this.state.age)
-    return React.createElement('div', {
-      onClick: this.onClick.bind(this)
-    }, `age: ${age} -- gender: ${gender}`)
+    // console.log('context', this.context) 
+    // {name:"zhangsan"}
+    return React.createElement(
+      'a', 
+      {
+        onClick: this.onClick.bind(this)
+      }, 
+      `age: ${age} -- gender: ${gender}`
+    );
   }
   ShowAge.prototype.componentDidMount = function () {
-    
+    MainLogger.tag('----------componentDidMount---------')
   }
   ShowAge.prototype.componentDidUpdate = function (prevProps, prevState) {
-    console.log('----------componentDidUpdate---------')
-    console.log(prevProps, prevState)
+    MainLogger.tag('----------componentDidUpdate---------')
+    // MainLogger.info(prevProps, prevState)
+  }
+  function Button () {
+    return React.createElement('button', null, '提交')
+  }
+  function Wrap () {
+    return React.createElement('div', null, [
+      React.createElement(ShowAge),
+      React.createElement(Button)
+    ]);
   }
   // 测试setState
+<<<<<<< HEAD
   // ReactDOM.createRoot(node, {
   //   unstable_concurrentUpdatesByDefault: true
   // }).render(React.createElement(ShowAge));
+=======
+  ReactDOM.createRoot(node, {
+    unstable_concurrentUpdatesByDefault: true
+  }).render(
+    React.createElement(Wrap)
+    // React.createElement(
+    //   Context.Provider, 
+    //   {
+    //     value: {name: 'zhangsan'}
+    //   }, 
+    //   React.createElement(ShowAge)
+    // )
+  );
+>>>>>>> 85d19f46ab74e1c17e9fba35b529a15163b3ede9
 
   // ----------------------------------------------------------------------
   // 测试hooks

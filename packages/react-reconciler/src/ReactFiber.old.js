@@ -264,7 +264,6 @@ export function createWorkInProgress(current: Fiber, pendingProps: any): Fiber {
 
     if (__DEV__) {
       // DEV-only fields
-
       workInProgress._debugSource = current._debugSource;
       workInProgress._debugOwner = current._debugOwner;
       workInProgress._debugHookTypes = current._debugHookTypes;

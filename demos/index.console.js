@@ -13,7 +13,7 @@ var showChild = function () {}
     } else if (typeof elementKey === 'string') {
       _elementType = elementKey
     } else {
-      _elementType = elementKey.displayName || elementKey.name
+      _elementType = elementKey.displayName || elementKey.name||''
     } 
     return _elementType
   }

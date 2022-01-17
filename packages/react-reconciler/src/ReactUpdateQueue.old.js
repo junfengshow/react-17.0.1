@@ -482,6 +482,7 @@ export function processUpdateQueue<State>(
 
     // The pending queue is circular. Disconnect the pointer between first
     // and last so that it's non-circular.
+    // 链表操作
     const lastPendingUpdate = pendingQueue;
     const firstPendingUpdate = lastPendingUpdate.next;
     lastPendingUpdate.next = null;

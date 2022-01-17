@@ -671,10 +671,11 @@ function bubbleProperties(completedWork: Fiber) {
 
   let newChildLanes = NoLanes;
   let subtreeFlags = NoFlags;
-
+  // render: false
+  // Button: true, others: false
   if (!didBailout) {
     // Bubble up the earliest expiration time.
-    // false
+    // false false false false
     if (enableProfilerTimer && (completedWork.mode & ProfileMode) !== NoMode) {
       // In profiling mode, resetChildExpirationTime is also used to reset
       // profiler durations.
@@ -709,6 +710,7 @@ function bubbleProperties(completedWork: Fiber) {
     } else {
       let child = completedWork.child;
       while (child !== null) {
+        // 按位或
         newChildLanes = mergeLanes(
           newChildLanes,
           mergeLanes(child.lanes, child.childLanes),

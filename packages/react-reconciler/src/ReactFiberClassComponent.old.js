@@ -646,7 +646,9 @@ function constructClassInstance(
       }
     }
   }
-
+  
+  // contentType:
+  // {Provider, Consumer ...}
   if (typeof contextType === 'object' && contextType !== null) {
     context = readContext((contextType: any));
   } else if (!disableLegacyContext) {

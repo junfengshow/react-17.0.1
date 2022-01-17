@@ -165,6 +165,7 @@ function flushWork(hasTimeRemaining, initialTime) {
       return workLoop(hasTimeRemaining, initialTime);
     }
   } finally {
+    // SchedulerLogger.tag(`this is flushWork finally`);
     currentTask = null;
     currentPriorityLevel = previousPriorityLevel;
     isPerformingWork = false;
@@ -516,6 +517,7 @@ const performWorkUntilDeadline = () => {
     // cycle. This means there's always time remaining at the beginning of
     // the message event.
     deadline = currentTime + yieldInterval;
+    // yieldInterval 5ms
     const hasTimeRemaining = true;
 
     // If a scheduler task throws, exit the current browser task so the
@@ -588,6 +590,7 @@ if (typeof localSetImmediate === 'function') {
   };
 }
 
+// flushWork
 function requestHostCallback(callback) {
   scheduledHostCallback = callback;
   if (!isMessageLoopRunning) {
