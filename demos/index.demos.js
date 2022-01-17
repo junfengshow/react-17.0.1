@@ -1,15 +1,5 @@
 const node = document.getElementById('app');
 const node2 = document.getElementById('app2');
-<<<<<<< HEAD
-const { useState, useEffect, Component } = React;
-let array = new Array(1000).fill(1000);
-function extendsFunc (Parent, Child) {
-  Child.prototype = new Parent();
-  Child.constructor = Child;
-}
-
-;(function () {
-=======
 const { useState, useEffect, Component, clone, createContext } = React
 
 ;(function () {
@@ -18,7 +8,6 @@ const { useState, useEffect, Component, clone, createContext } = React
     Child.prototype = new Parent();
     Child.constructor = Child;
   }
->>>>>>> 85d19f46ab74e1c17e9fba35b529a15163b3ede9
 
   // 最简单的方式
 
@@ -126,11 +115,6 @@ const { useState, useEffect, Component, clone, createContext } = React
     ]);
   }
   // 测试setState
-<<<<<<< HEAD
-  // ReactDOM.createRoot(node, {
-  //   unstable_concurrentUpdatesByDefault: true
-  // }).render(React.createElement(ShowAge));
-=======
   ReactDOM.createRoot(node, {
     unstable_concurrentUpdatesByDefault: true
   }).render(
@@ -143,7 +127,6 @@ const { useState, useEffect, Component, clone, createContext } = React
     //   React.createElement(ShowAge)
     // )
   );
->>>>>>> 85d19f46ab74e1c17e9fba35b529a15163b3ede9
 
   // ----------------------------------------------------------------------
   // 测试hooks
