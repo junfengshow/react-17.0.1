@@ -397,12 +397,12 @@ export function listenToAllSupportedEvents(rootContainerElement: EventTarget) {
       // We handle selectionchange separately because it
       // doesn't bubble and needs to be on the document.
       if (
-        domEventName !== 'selectionchange' &&
-        (
-          // domEventName === 'change'
-          domEventName === 'click' 
-          // domEventName === 'invalid' 
-        ) // 自己加的跳过大部分绑定,利于查看日志
+        domEventName !== 'selectionchange' 
+        // && (
+        //   // domEventName === 'change' ||
+        //   domEventName === 'click' ||
+        //   // domEventName === 'invalid' 
+        // ) // 自己加的跳过大部分绑定,利于查看日志
       ) {
         // 冒泡
         if (!nonDelegatedEvents.has(domEventName)) {

@@ -204,7 +204,7 @@ export function getChildHostContext(
   rootContainerInstance: Container,
 ): HostContext {
   if (__DEV__) {
-    const parentHostContextDev = ((parentHostContext: any): HostContextDev);
+    const parentHostContextDev = parentHostContext;
     const namespace = getChildNamespace(parentHostContextDev.namespace, type);
     const ancestorInfo = updatedAncestorInfo(
       parentHostContextDev.ancestorInfo,
@@ -212,7 +212,7 @@ export function getChildHostContext(
     );
     return {namespace, ancestorInfo};
   }
-  const parentNamespace = ((parentHostContext: any): HostContextProd);
+  const parentNamespace = parentHostContext;
   return getChildNamespace(parentNamespace, type);
 }
 
@@ -238,7 +238,7 @@ export function beforeActiveInstanceBlur(internalInstanceHandle: Object): void {
   if (enableCreateEventHandleAPI) {
     ReactBrowserEventEmitterSetEnabled(true);
     dispatchBeforeDetachedBlur(
-      (selectionInformation: any).focusedElem,
+      selectionInformation.focusedElem,
       internalInstanceHandle,
     );
     ReactBrowserEventEmitterSetEnabled(false);
@@ -248,7 +248,7 @@ export function beforeActiveInstanceBlur(internalInstanceHandle: Object): void {
 export function afterActiveInstanceBlur(): void {
   if (enableCreateEventHandleAPI) {
     ReactBrowserEventEmitterSetEnabled(true);
-    dispatchAfterDetachedBlur((selectionInformation: any).focusedElem);
+    dispatchAfterDetachedBlur(selectionInformation.focusedElem);
     ReactBrowserEventEmitterSetEnabled(false);
   }
 }

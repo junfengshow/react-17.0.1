@@ -720,7 +720,7 @@ function ensureRootIsScheduled(root: FiberRoot, currentTime: number) {
   if (newCallbackPriority === SyncLane) {
     // Special case: Sync React callbacks are scheduled on a special
     // internal queue
-    //  setState: false
+    // setState: false
     MainLogger.step(
       `newCallbackPriority === SyncLane true根据条件执行不同函数`,
       `root.tag === LegacyRoot: ${root.tag === LegacyRoot}; 
@@ -733,6 +733,7 @@ function ensureRootIsScheduled(root: FiberRoot, currentTime: number) {
       scheduleSyncCallback(performSyncWorkOnRoot.bind(null, root));
     }
     
+    // 用微任务这是为啥？
     if (supportsMicrotasks) {
       // Flush the queue in a microtask.
       scheduleMicrotask(flushSyncCallbacks);

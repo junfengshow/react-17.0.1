@@ -1,12 +1,13 @@
 const node = document.getElementById('app');
 const node2 = document.getElementById('app2');
+const { useState, useEffect, Component } = React;
+let array = new Array(1000).fill(1000);
+function extendsFunc (Parent, Child) {
+  Child.prototype = new Parent();
+  Child.constructor = Child;
+}
+
 ;(function () {
-  const { useState, useEffect, Component, clone } = React
-  let array = new Array(1000).fill(1000);
-  function extendsFunc (Parent, Child) {
-    Child.prototype = new Parent();
-    Child.constructor = Child;
-  }
 
   // 最简单的方式
 
@@ -97,9 +98,9 @@ const node2 = document.getElementById('app2');
     console.log(prevProps, prevState)
   }
   // 测试setState
-  ReactDOM.createRoot(node, {
-    unstable_concurrentUpdatesByDefault: true
-  }).render(React.createElement(ShowAge));
+  // ReactDOM.createRoot(node, {
+  //   unstable_concurrentUpdatesByDefault: true
+  // }).render(React.createElement(ShowAge));
 
   // ----------------------------------------------------------------------
   // 测试hooks
@@ -141,20 +142,6 @@ const node2 = document.getElementById('app2');
   // ReactDOM.createRoot(node, {
   //   unstable_concurrentUpdatesByDefault: true
   // }).render(React.createElement(HooksDemo));
-
-  // ----------------------------------------------------------------------
-  // concurrent模式 最简单的Hook
-  function JustHookDemo () {
-    const [value, setValue] = useState('');
-    const onChange = (e) => {
-      const val = e.target.value;
-      setValue(val);
-    }
-    return React.createElement('input', { value, placeholder: '请输入', onChange })
-  }
-  // ReactDOM.createRoot(node, {
-  //   unstable_concurrentUpdatesByDefault: true
-  // }).render(React.createElement(JustHookDemo));
 
   // ----------------------------------------------------------------------
   // concurrent模式
@@ -228,6 +215,69 @@ const node2 = document.getElementById('app2');
   // ReactDOM.createRoot(node, {
   //   unstable_concurrentUpdatesByDefault: true
   // }).render(React.createElement(DiffDemo));
+})();
+
+// 执行器 -- scheduler
+;(function () {
+  function localTimeout (cb, ms) {
+    setTimeout(cb, ms || 0);
+  }
+  // function SchedulerDemo () {
+  //   const [value, setValue] = useState(0);
+  //   useEffect(() => {
+  //     const node = document.getElementById('aaaaaabbbbbb');
+  //     node.addEventListener('click', onClick)
+  //     return () => {
+  //       node.removeEventListener('click', onClick)
+  //     }
+  //   }, [])
+  //   const onClick = (e) => {
+  //     e.preventDefault();
+  //     // localTimeout(() => setValue(1));
+  //     // localTimeout(() => setValue(2));
+  //     // localTimeout(() => setValue(3));
+  //     setValue(1);
+  //     setValue(2);
+  //     setValue(3);
+  //   }
+  //   return React.createElement('div', null, React.createElement('a', { id: 'aaaaaabbbbbb' }, 'click: ' + value))
+  // }
+  function SchedulerDemo1 () {
+    this.state = {
+      value: 0,
+      age: 0,
+      gender: 0,
+    }
+    this.onClick = this.onClick.bind(this);
+  }
+  extendsFunc(Component, SchedulerDemo1);
+  SchedulerDemo1.prototype.componentDidMount = function () {
+    const node = document.getElementById('aaaaaabbbbbb');
+    node.addEventListener('click', this.onClick);
+  }
+  SchedulerDemo1.prototype.componentWillUnmount = function () {
+    const node = document.getElementById('aaaaaabbbbbb');
+    node.removeEventListener('click', this.onClick);
+  }
+  SchedulerDemo1.prototype.onClick = function () {
+    localTimeout(() => {
+      this.setState({ value: 1 });
+    }, 1003);
+    localTimeout(() => {
+      this.setState({ age: 1 });
+    }, 1000);
+    localTimeout(() => {
+      this.setState({ gender: 1 });
+    }, 997);
+    // this.setState({ gender: 1 })
+  }
+  SchedulerDemo1.prototype.render = function () {
+    const { value } = this.state;
+    return React.createElement('div', null, React.createElement('a', { id: 'aaaaaabbbbbb' }, 'click: ' + value));
+  }
+  ReactDOM.createRoot(node, {
+    unstable_concurrentUpdatesByDefault: true
+  }).render(React.createElement(SchedulerDemo1));
 })();
 
 // 事件 -- 捕获/冒泡
