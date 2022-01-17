@@ -498,6 +498,7 @@ export function scheduleUpdateOnFiber(
   }
 
   // Mark that the root has a pending update.
+  // root.pendingLanes |= lane
   markRootUpdated(root, lane, eventTime);
 
   if (enableProfilerTimer && enableProfilerNestedUpdateScheduledHook) {
@@ -1576,6 +1577,7 @@ function renderRootConcurrent(root: FiberRoot, lanes: Lanes) {
     }
 
     resetRenderTimer();
+    // 这就是去建了个 workInProgress
     prepareFreshStack(root, lanes);
   }
 
@@ -1648,6 +1650,8 @@ function performUnitOfWork(unitOfWork: Fiber): void {
 
   let next;
   RenderLogger.line('beginWork start', false);
+  RenderLogger.info('beginWork current', current);
+  RenderLogger.info('beginWork unitOfWork', unitOfWork);
   if (enableProfilerTimer && (unitOfWork.mode & ProfileMode) !== NoMode) {
     startProfilerTimer(unitOfWork);
     next = beginWork(current, unitOfWork, subtreeRenderLanes);
@@ -1655,6 +1659,7 @@ function performUnitOfWork(unitOfWork: Fiber): void {
   } else {
     next = beginWork(current, unitOfWork, subtreeRenderLanes);
   }
+  RenderLogger.info('next', next);
   RenderLogger.line('beginWork end', true);
 
   resetCurrentDebugFiberInDEV();

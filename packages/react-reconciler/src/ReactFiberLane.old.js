@@ -199,6 +199,7 @@ export function getNextLanes(root: FiberRoot, wipLanes: Lanes): Lanes {
   // Do not work on any idle work until all the non-idle work has finished,
   // even if the work is suspended.
   const nonIdlePendingLanes = pendingLanes & NonIdleLanes;
+  // nonIdleLanes: 高权限
   if (nonIdlePendingLanes !== NoLanes) {
     const nonIdleUnblockedLanes = nonIdlePendingLanes & ~suspendedLanes;
     if (nonIdleUnblockedLanes !== NoLanes) {
@@ -302,6 +303,9 @@ export function getNextLanes(root: FiberRoot, wipLanes: Lanes): Lanes {
       lanes &= ~lane;
     }
   }
+
+  // render的时候会走到这里
+  // MainLogger.info('entangledLanes', entangledLanes);
 
   return nextLanes;
 }

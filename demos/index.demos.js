@@ -70,13 +70,13 @@ const { useState, useEffect, Component, clone, createContext } = React
   // }).render(React.createElement(InputDemo));
 
 
-  const Context = createContext();
+  // const Context = createContext();
   function ShowAge () {
     this.state = {
       age: 0, gender: 0
     }
   }
-  ShowAge.contextType = Context;
+  // ShowAge.contextType = Context;
   extendsFunc(Component, ShowAge)
   ShowAge.prototype.onClick = function () {
     this.setState({
@@ -105,17 +105,27 @@ const { useState, useEffect, Component, clone, createContext } = React
     MainLogger.tag('----------componentDidUpdate---------')
     // MainLogger.info(prevProps, prevState)
   }
+  function Button () {
+    return React.createElement('button', null, '提交')
+  }
+  function Wrap () {
+    return React.createElement('div', null, [
+      React.createElement(ShowAge),
+      React.createElement(Button)
+    ]);
+  }
   // 测试setState
   ReactDOM.createRoot(node, {
     unstable_concurrentUpdatesByDefault: true
   }).render(
-    React.createElement(
-      Context.Provider, 
-      {
-        value: {name: 'zhangsan'}
-      }, 
-      React.createElement(ShowAge)
-    )
+    React.createElement(Wrap)
+    // React.createElement(
+    //   Context.Provider, 
+    //   {
+    //     value: {name: 'zhangsan'}
+    //   }, 
+    //   React.createElement(ShowAge)
+    // )
   );
 
   // ----------------------------------------------------------------------
