@@ -93,7 +93,10 @@ const { useState, useEffect, Component, clone, createContext } = React
     return React.createElement(
       'a', 
       {
-        onClick: this.onClick.bind(this)
+        onClick: this.onClick.bind(this),
+        style: {
+          display: 'block'
+        }
       }, 
       `age: ${age} -- gender: ${gender}`
     );
@@ -105,13 +108,20 @@ const { useState, useEffect, Component, clone, createContext } = React
     MainLogger.tag('----------componentDidUpdate---------')
     // MainLogger.info(prevProps, prevState)
   }
+  
   function Button () {
-    return React.createElement('button', null, '提交')
+    const [count, setCount] = React.useState(0);
+    const [age, setAge] = React.useState('age: ');
+    return React.createElement('button', {
+      onClick: () => {
+        setCount(count + 1)
+      }
+    }, '提交' + count)
   }
   function Wrap () {
     return React.createElement('div', null, [
-      React.createElement(ShowAge),
-      React.createElement(Button)
+      React.createElement(ShowAge, { key: 1 }),
+      React.createElement(Button, { key: 2 })
     ]);
   }
   // 测试setState

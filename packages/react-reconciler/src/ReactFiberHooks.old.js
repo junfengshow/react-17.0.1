@@ -649,7 +649,6 @@ function updateWorkInProgressHook(): Hook {
     currentHook = nextCurrentHook;
   } else {
     // Clone from the current hook.
-
     invariant(
       nextCurrentHook !== null,
       'Rendered more hooks than during the previous render.',
@@ -722,6 +721,7 @@ function updateReducer<S, I, A>(
   initialArg: I,
   init?: I => S,
 ): [S, Dispatch<A>] {
+  // workInProgressHook
   const hook = updateWorkInProgressHook();
   const queue = hook.queue;
   invariant(
@@ -738,6 +738,7 @@ function updateReducer<S, I, A>(
 
   // The last pending update that hasn't been processed yet.
   const pendingQueue = queue.pending;
+  
   if (pendingQueue !== null) {
     // We have new updates that haven't been processed yet.
     // We'll add them to the base queue.
@@ -1982,7 +1983,7 @@ function dispatchAction<S, A>(
       fiber.lanes === NoLanes &&
       (alternate === null || alternate.lanes === NoLanes)
     ) {
-      
+      // 第一次更新的时候
       // The queue is currently empty, which means we can eagerly compute the
       // next state before entering the render phase. If the new state is the
       // same as the current state, we may be able to bail out entirely.
