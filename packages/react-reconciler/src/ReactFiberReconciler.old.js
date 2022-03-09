@@ -330,6 +330,7 @@ export function updateContainer(
   }
   // 将更新添加到队列
   enqueueUpdate(current, update, lane);
+  // current.updateQueue.shared.pending = update
   const root = scheduleUpdateOnFiber(current, lane, eventTime);
   if (root !== null) {
     entangleTransitions(root, current, lane);

@@ -2,12 +2,13 @@ const node = document.getElementById('app');
 const node2 = document.getElementById('app2');
 const { useState, useEffect, Component, clone, createContext } = React
 
+function extendsFunc (Parent, Child) {
+  Child.prototype = new Parent();
+  Child.constructor = Child;
+}
+
 ;(function () {
   let array = new Array(1000).fill(1000);
-  function extendsFunc (Parent, Child) {
-    Child.prototype = new Parent();
-    Child.constructor = Child;
-  }
 
   // 最简单的方式
 
@@ -110,8 +111,8 @@ const { useState, useEffect, Component, clone, createContext } = React
   }
   function Wrap () {
     return React.createElement('div', null, [
-      React.createElement(ShowAge),
-      React.createElement(Button)
+      React.createElement(ShowAge, { key: 'showAge' }),
+      React.createElement(Button, { key: 'button' }),
     ]);
   }
   // 测试setState
@@ -301,9 +302,9 @@ const { useState, useEffect, Component, clone, createContext } = React
     const { value } = this.state;
     return React.createElement('div', null, React.createElement('a', { id: 'aaaaaabbbbbb' }, 'click: ' + value));
   }
-  ReactDOM.createRoot(node, {
-    unstable_concurrentUpdatesByDefault: true
-  }).render(React.createElement(SchedulerDemo1));
+  // ReactDOM.createRoot(node, {
+  //   unstable_concurrentUpdatesByDefault: true
+  // }).render(React.createElement(SchedulerDemo1));
 })();
 
 // 事件 -- 捕获/冒泡
