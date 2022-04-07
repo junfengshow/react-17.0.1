@@ -371,6 +371,7 @@ export function createElement(
   if (namespaceURI === HTML_NAMESPACE) {
     namespaceURI = getIntrinsicNamespace(type);
   }
+  // HTML_NAMESPACE: http://www.w3.org/1999/xhtml
   if (namespaceURI === HTML_NAMESPACE) {
     if (__DEV__) {
       isCustomComponentTag = isCustomComponent(type, props);

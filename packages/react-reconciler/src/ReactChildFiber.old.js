@@ -1255,6 +1255,7 @@ function ChildReconciler(shouldTrackSideEffects) {
     if (typeof newChild === 'object' && newChild !== null) {
       switch (newChild.$$typeof) {
         case REACT_ELEMENT_TYPE:
+
           return placeSingleChild(
             reconcileSingleElement(
               returnFiber,

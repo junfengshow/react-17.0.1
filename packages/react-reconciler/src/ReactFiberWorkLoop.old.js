@@ -1651,7 +1651,7 @@ function performUnitOfWork(unitOfWork: Fiber): void {
 
   let next;
   RenderLogger.line('beginWork start', false);
-  RenderLogger.info('beginWork current', current);
+  // RenderLogger.info('beginWork current', current);
   RenderLogger.info('beginWork unitOfWork', unitOfWork);
   if (enableProfilerTimer && (unitOfWork.mode & ProfileMode) !== NoMode) {
     startProfilerTimer(unitOfWork);
@@ -1660,7 +1660,7 @@ function performUnitOfWork(unitOfWork: Fiber): void {
   } else {
     next = beginWork(current, unitOfWork, subtreeRenderLanes);
   }
-  RenderLogger.info('next', next);
+  // RenderLogger.info('next', next);
   RenderLogger.line('beginWork end', true);
 
   resetCurrentDebugFiberInDEV();
@@ -1688,8 +1688,11 @@ function completeUnitOfWork(unitOfWork: Fiber): void {
     MainLogger.step('completeUnitOfWork', completedWork);
     // Check if the work completed or if something threw.
     if ((completedWork.flags & Incomplete) === NoFlags) {
+      // completed
       setCurrentDebugFiberInDEV(completedWork);
       let next;
+      
+      // true
       if (
         !enableProfilerTimer ||
         (completedWork.mode & ProfileMode) === NoMode
@@ -1940,7 +1943,8 @@ function commitRootImpl(root, renderPriorityLevel) {
     }
 
     // The next phase is the mutation phase, where we mutate the host tree.
-    CommitLogger.step('commitRootImpl commitMutationEffects', finishedWork);
+    CommitLogger.step('commitRootImpl commitMutationEffects finishedWork', finishedWork);
+    CommitLogger.step('commitRootImpl commitMutationEffects root', root);
     commitMutationEffects(root, finishedWork, lanes);
 
     if (enableCreateEventHandleAPI) {
@@ -2121,7 +2125,7 @@ function commitRootImpl(root, renderPriorityLevel) {
 }
 
 export function flushPassiveEffects(): boolean {
-  // MainLogger.step('flushPassiveEffects rootWithPendingPassiveEffects', rootWithPendingPassiveEffects)
+  // CommitLogger.step('commit rootWithPendingPassiveEffects', rootWithPendingPassiveEffects)
   // Returns whether passive effects were flushed.
   // TODO: Combine this check with the one in flushPassiveEFfectsImpl. We should
   // probably just combine the two functions. I believe they were only separate

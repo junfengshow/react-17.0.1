@@ -205,6 +205,7 @@ if (supportsMutation) {
     // We only have the top Fiber that was created but we need recurse down its
     // children to find all the terminal nodes.
     let node = workInProgress.child;
+  
     while (node !== null) {
       if (node.tag === HostComponent || node.tag === HostText) {
         appendInitialChild(parent, node.stateNode);
@@ -884,6 +885,7 @@ function completeWork(
         // or completeWork depending on whether we want to add them top->down or
         // bottom->up. Top->down is faster in IE11.
         const wasHydrated = popHydrationState(workInProgress);
+        // false
         if (wasHydrated) {
           // TODO: Move this and createInstance step into the beginPhase
           // to consolidate.
@@ -899,6 +901,8 @@ function completeWork(
             markUpdate(workInProgress);
           }
         } else {
+
+          // dom node
           const instance = createInstance(
             type,
             newProps,

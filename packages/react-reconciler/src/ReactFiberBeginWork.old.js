@@ -3231,7 +3231,7 @@ function beginWork(
   workInProgress: Fiber,
   renderLanes: Lanes,
 ): Fiber | null {
-  RenderLogger.step('beginWork', workInProgress);
+  // RenderLogger.step('beginWork', workInProgress);
   let updateLanes = workInProgress.lanes;
 
   if (__DEV__) {

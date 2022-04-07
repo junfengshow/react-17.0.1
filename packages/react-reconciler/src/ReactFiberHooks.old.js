@@ -635,6 +635,7 @@ function updateWorkInProgressHook(): Hook {
   }
 
   let nextWorkInProgressHook: null | Hook;
+  // HooksLogger.info('workInProgressHook', workInProgressHook)
   if (workInProgressHook === null) {
     nextWorkInProgressHook = currentlyRenderingFiber.memoizedState;
   } else {
@@ -648,8 +649,8 @@ function updateWorkInProgressHook(): Hook {
 
     currentHook = nextCurrentHook;
   } else {
+    // HooksLogger.tag('nextWorkInProgressHook 为null')
     // Clone from the current hook.
-
     invariant(
       nextCurrentHook !== null,
       'Rendered more hooks than during the previous render.',
@@ -722,6 +723,7 @@ function updateReducer<S, I, A>(
   initialArg: I,
   init?: I => S,
 ): [S, Dispatch<A>] {
+  // workInProgressHook
   const hook = updateWorkInProgressHook();
   const queue = hook.queue;
   invariant(
@@ -732,12 +734,14 @@ function updateReducer<S, I, A>(
   queue.lastRenderedReducer = reducer;
 
   const current: Hook = (currentHook: any);
+  // current: alternate
 
   // The last rebase update that is NOT part of the base state.
   let baseQueue = current.baseQueue;
 
   // The last pending update that hasn't been processed yet.
   const pendingQueue = queue.pending;
+  
   if (pendingQueue !== null) {
     // We have new updates that haven't been processed yet.
     // We'll add them to the base queue.
@@ -773,6 +777,7 @@ function updateReducer<S, I, A>(
     let update = first;
     do {
       const updateLane = update.lane;
+      // 一般false
       if (!isSubsetOfLanes(renderLanes, updateLane)) {
         // Priority is insufficient. Skip this update. If this is the first
         // skipped update, the previous update/state is the new base
@@ -813,7 +818,7 @@ function updateReducer<S, I, A>(
           };
           newBaseQueueLast = newBaseQueueLast.next = clone;
         }
-
+        
         // Process this update.
         if (update.eagerReducer === reducer) {
           // If this update was processed eagerly, and its reducer matches the
@@ -1250,6 +1255,7 @@ function mountState<S>(
     initialState = initialState();
   }
   hook.memoizedState = hook.baseState = initialState;
+  // HooksLogger.info('hook', hook)
   const queue = (hook.queue = {
     pending: null,
     interleaved: null,
@@ -1928,6 +1934,7 @@ function dispatchAction<S, A>(
   const alternate = fiber.alternate;
   // todo
   // 什么情况下这里会是true呢?
+  // HooksLogger.info('fiber === currentlyRenderingFiber', fiber === currentlyRenderingFiber)
   if (
     fiber === currentlyRenderingFiber ||
     (alternate !== null && alternate === currentlyRenderingFiber)
@@ -1982,7 +1989,7 @@ function dispatchAction<S, A>(
       fiber.lanes === NoLanes &&
       (alternate === null || alternate.lanes === NoLanes)
     ) {
-      
+      // 第一次更新的时候
       // The queue is currently empty, which means we can eagerly compute the
       // next state before entering the render phase. If the new state is the
       // same as the current state, we may be able to bail out entirely.

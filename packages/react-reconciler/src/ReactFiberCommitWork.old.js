@@ -356,10 +356,10 @@ function commitBeforeMutationEffectsOnFiber(finishedWork: Fiber) {
       }
     }
   }
-
+  
+  // true
   if ((flags & Snapshot) !== NoFlags) {
     setCurrentDebugFiberInDEV(finishedWork);
-
     switch (finishedWork.tag) {
       case FunctionComponent:
       case ForwardRef:
