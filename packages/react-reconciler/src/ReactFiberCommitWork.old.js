@@ -2075,7 +2075,9 @@ function commitMutationEffects_begin(root: FiberRoot) {
       ensureCorrectReturnPointer(child, fiber);
       nextEffect = child;
     } else {
+      // console.log('node', document.getElementById('oDiv')) // null
       commitMutationEffects_complete(root);
+      // console.log('node', document.getElementById('oDiv')) // div
     }
   }
 }
@@ -2196,7 +2198,12 @@ function commitLayoutEffects_begin(
   while (nextEffect !== null) {
     const fiber = nextEffect;
     const firstChild = fiber.child;
-
+    CommitLogger.info(
+      'commitLayoutEffects_begin',
+      enableSuspenseLayoutEffectSemantics &&
+      fiber.tag === OffscreenComponent &&
+      isModernRoot
+    );
     if (
       enableSuspenseLayoutEffectSemantics &&
       fiber.tag === OffscreenComponent &&

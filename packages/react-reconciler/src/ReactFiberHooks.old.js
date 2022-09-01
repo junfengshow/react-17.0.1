@@ -605,7 +605,6 @@ function mountWorkInProgressHook(): Hook {
 
     next: null,
   };
-
   if (workInProgressHook === null) {
     // This is the first hook in the list
     currentlyRenderingFiber.memoizedState = workInProgressHook = hook;
@@ -1412,6 +1411,7 @@ function mountEffectImpl(fiberFlags, hookFlags, create, deps): void {
   const hook = mountWorkInProgressHook();
   const nextDeps = deps === undefined ? null : deps;
   currentlyRenderingFiber.flags |= fiberFlags;
+  // HooksLogger.tag('mountEffectImpl');
   hook.memoizedState = pushEffect(
     HookHasEffect | hookFlags,
     create,

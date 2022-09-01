@@ -234,6 +234,7 @@ if (supportsMutation) {
 
   updateHostContainer = function(current: null | Fiber, workInProgress: Fiber) {
     // Noop
+    // console.log('current', current)
   };
   updateHostComponent = function(
     current: Fiber,
@@ -794,7 +795,7 @@ function completeWork(
   renderLanes: Lanes,
 ): Fiber | null {
   const newProps = workInProgress.pendingProps;
-
+  
   switch (workInProgress.tag) {
     case IndeterminateComponent:
     case LazyComponent:
@@ -852,6 +853,7 @@ function completeWork(
       return null;
     }
     case HostComponent: {
+      // RenderLogger.info('HostComponent workInProgress', workInProgress);
       popHostContext(workInProgress);
       const rootContainerInstance = getRootHostContainer();
       const type = workInProgress.type;

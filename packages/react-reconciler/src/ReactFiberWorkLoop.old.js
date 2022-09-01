@@ -560,12 +560,18 @@ export function scheduleUpdateOnFiber(
       // Check if we're not already rendering
       (executionContext & (RenderContext | CommitContext)) === NoContext
     ) {
+      MainLogger.tag('scheduleUpdateOnFiber: (executionContext & LegacyUnbatchedContext) !== NoContext');
       // This is a legacy edge case. The initial mount of a ReactDOM.render-ed
       // root inside of batchedUpdates should be synchronous, but layout updates
       // should be deferred until the end of the batch.
       performSyncWorkOnRoot(root);
     } else {
       ensureRootIsScheduled(root, eventTime);
+
+      MainLogger.tag(`
+        scheduleUpdateOnFiber executionContext === NoContext: ${executionContext === NoContext}
+        (fiber.mode & ConcurrentMode) === NoMode: ${(fiber.mode & ConcurrentMode) === NoMode}
+      `);
       if (
         executionContext === NoContext &&
         (fiber.mode & ConcurrentMode) === NoMode
@@ -734,7 +740,7 @@ function ensureRootIsScheduled(root: FiberRoot, currentTime: number) {
       scheduleSyncCallback(performSyncWorkOnRoot.bind(null, root));
     }
     
-    // 用微任务这是为啥？
+    // 用微任务这是为啥？-- 为了合并状态
     if (supportsMicrotasks) {
       // Flush the queue in a microtask.
       scheduleMicrotask(flushSyncCallbacks);
@@ -785,7 +791,6 @@ function performConcurrentWorkOnRoot(root, didTimeout) {
   if (enableProfilerTimer && enableProfilerNestedUpdatePhase) {
     resetNestedUpdateFlag();
   }
-
   // Since we know we're in a React event, we can clear the current
   // event time. The next update will compute a new event time.
   currentEventTime = NoTimestamp;
@@ -836,7 +841,6 @@ function performConcurrentWorkOnRoot(root, didTimeout) {
     (disableSchedulerTimeoutInWorkLoop || !didTimeout) // render: false
       ? renderRootConcurrent(root, lanes)
       : renderRootSync(root, lanes);
-
   MainLogger.step(
     'performConcurrentWorkOnRoot --> exitStatus', 
     getExistStatusStr(exitStatus)
@@ -881,7 +885,9 @@ function performConcurrentWorkOnRoot(root, didTimeout) {
     root.finishedWork = finishedWork;
     root.finishedLanes = lanes;
     // 开启 commit 阶段
+    // 这里dom仍未放到页面
     finishConcurrentRender(root, exitStatus, lanes);
+    // 这里dom已经放到页面
   }
 
   ensureRootIsScheduled(root, now());
@@ -1650,9 +1656,9 @@ function performUnitOfWork(unitOfWork: Fiber): void {
   setCurrentDebugFiberInDEV(unitOfWork);
 
   let next;
-  RenderLogger.line('beginWork start', false);
+  RenderLogger.line('performUnitOfWork start', false);
   // RenderLogger.info('beginWork current', current);
-  RenderLogger.info('beginWork unitOfWork', unitOfWork);
+  RenderLogger.info('performUnitOfWork unitOfWork', unitOfWork);
   if (enableProfilerTimer && (unitOfWork.mode & ProfileMode) !== NoMode) {
     startProfilerTimer(unitOfWork);
     next = beginWork(current, unitOfWork, subtreeRenderLanes);
@@ -1661,7 +1667,7 @@ function performUnitOfWork(unitOfWork: Fiber): void {
     next = beginWork(current, unitOfWork, subtreeRenderLanes);
   }
   // RenderLogger.info('next', next);
-  RenderLogger.line('beginWork end', true);
+  RenderLogger.line('performUnitOfWork end', true);
 
   resetCurrentDebugFiberInDEV();
   unitOfWork.memoizedProps = unitOfWork.pendingProps;
@@ -1705,7 +1711,7 @@ function completeUnitOfWork(unitOfWork: Fiber): void {
         stopProfilerTimerIfRunningAndRecordDelta(completedWork, false);
       }
       resetCurrentDebugFiberInDEV();
-
+      // MainLogger.info('completeUnitOfWork after', completedWork);
       if (next !== null) {
         // Completing this fiber spawned new work. Work on that next.
         workInProgress = next;
@@ -1935,7 +1941,7 @@ function commitRootImpl(root, renderPriorityLevel) {
       // batch. This enables them to be grouped later.
       recordCommitTime();
     }
-
+    
     if (enableProfilerTimer && enableProfilerNestedUpdateScheduledHook) {
       // Track the root here, rather than in commitLayoutEffects(), because of ref setters.
       // Updates scheduled during ref detachment should also be flagged.
@@ -1945,19 +1951,23 @@ function commitRootImpl(root, renderPriorityLevel) {
     // The next phase is the mutation phase, where we mutate the host tree.
     CommitLogger.step('commitRootImpl commitMutationEffects finishedWork', finishedWork);
     CommitLogger.step('commitRootImpl commitMutationEffects root', root);
+    // 这里dom 未渲染到页面上
+    // node1 val user: 0;name: zhangsan
     commitMutationEffects(root, finishedWork, lanes);
-
+    // 这里dom 渲染到页面上
+    // node1 val user: 1;name: zhangsan
     if (enableCreateEventHandleAPI) {
       if (shouldFireAfterActiveInstanceBlur) {
         afterActiveInstanceBlur();
       }
     }
     resetAfterCommit(root.containerInfo);
-
+    // console.log('node3', document.getElementById('oDiv'))
     // The work-in-progress tree is now the current tree. This must come after
     // the mutation phase, so that the previous tree is still current during
     // componentWillUnmount, but before the layout phase, so that the finished
     // work is current during componentDidMount/Update.
+
     root.current = finishedWork;
 
     // The next phase is the layout phase, where we call effects that read
