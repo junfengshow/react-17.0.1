@@ -622,8 +622,10 @@ function updateWorkInProgressHook(): Hook {
   // use as a base. When we reach the end of the base list, we must switch to
   // the dispatcher used for mounts.
   let nextCurrentHook: null | Hook;
+  // HooksLogger.info('currentHook', currentHook)
   if (currentHook === null) {
     const current = currentlyRenderingFiber.alternate;
+    // HooksLogger.info('current', current)
     if (current !== null) {
       nextCurrentHook = current.memoizedState;
     } else {
@@ -744,6 +746,9 @@ function updateReducer<S, I, A>(
   if (pendingQueue !== null) {
     // We have new updates that haven't been processed yet.
     // We'll add them to the base queue.
+    HooksLogger.tag(`
+    baseQueue !== null: ${baseQueue !== null}
+    `);
     if (baseQueue !== null) {
       // Merge the pending queue and the base queue.
       const baseFirst = baseQueue.next;
@@ -764,7 +769,7 @@ function updateReducer<S, I, A>(
     current.baseQueue = baseQueue = pendingQueue;
     queue.pending = null;
   }
-
+  // HooksLogger.info('baseQueue', baseQueue);
   if (baseQueue !== null) {
     // We have a queue to process.
     const first = baseQueue.next;
@@ -777,6 +782,7 @@ function updateReducer<S, I, A>(
     do {
       const updateLane = update.lane;
       // 一般false
+      // HooksLogger.tag(`!isSubsetOfLanes(renderLanes, updateLane): ${!isSubsetOfLanes(renderLanes, updateLane)}`);
       if (!isSubsetOfLanes(renderLanes, updateLane)) {
         // Priority is insufficient. Skip this update. If this is the first
         // skipped update, the previous update/state is the new base
@@ -804,6 +810,7 @@ function updateReducer<S, I, A>(
         markSkippedUpdateLanes(updateLane);
       } else {
         // This update does have sufficient priority.
+        // HooksLogger.info('newBaseQueueLast', newBaseQueueLast)
         if (newBaseQueueLast !== null) {
           const clone: Update<S, A> = {
             // This update is going to be committed so we never want uncommit
@@ -817,7 +824,7 @@ function updateReducer<S, I, A>(
           };
           newBaseQueueLast = newBaseQueueLast.next = clone;
         }
-        
+        // HooksLogger.info('update.eagerReducer === reducer', update.eagerReducer === reducer)
         // Process this update.
         if (update.eagerReducer === reducer) {
           // If this update was processed eagerly, and its reducer matches the
@@ -1974,6 +1981,7 @@ function dispatchAction<S, A>(
       }
       queue.interleaved = update;
     } else {
+      // HooksLogger.showLink('queue.pending', queue.pending)
       const pending = queue.pending;
       if (pending === null) {
         // This is the first update. Create a circular list.
@@ -1983,6 +1991,9 @@ function dispatchAction<S, A>(
         pending.next = update;
       }
       queue.pending = update;
+      // queue.pending: 4、1、2、3
+      // 最新的update是放在第一位的。
+      // HooksLogger.showLink('queue.pending 处理之后', queue.pending)
     }
 
     if (

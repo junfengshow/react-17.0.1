@@ -327,13 +327,23 @@ var showChild = function () {}
     })
   }
 
-  const commitLog = function () {
-
+  const commitLog = function () {}
+  const showLink = function (name, link) {
+    if (!link) {
+      info(`${name} --> loopItem`, link);
+      return;
+    }
+    let first = link;
+    let loopItem = link;
+    do {
+      info(`${name} --> loopItem`, loopItem);
+      loopItem = loopItem.next;
+    } while (loopItem && first !== loopItem);
   }
 
   // ---------------------------------------------------------
   let methods = {
-    step, warn, tag, info, line, compare
+    step, warn, tag, info, line, compare, showLink
   }
   wid.Logger = methods
   function composeMethods (methods, canUse) {

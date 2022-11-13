@@ -1,6 +1,6 @@
 const node = document.getElementById('app');
 const node2 = document.getElementById('app2');
-const { useState, useEffect, useRef, Component, clone, createContext } = React;
+const { useState, useEffect, useLayoutEffect, useRef, Component, clone, createContext } = React;
 
 function extendsFunc (Parent, Child) {
   Child.prototype = new Parent();
@@ -20,38 +20,50 @@ function extendsFunc (Parent, Child) {
     const [age, setAge] = useState(0);
     const [name, setName] = useState('zhangsan');
     const containerRef = useRef();
-    useEffect(() => {
-      // setTimeout(() => {
-      //   setAge(age + 1);
-      //   setAge(age + 1);
-      //   setAge(age + 1);
-      // }, 3000)
-      containerRef.current.addEventListener('click', () => {
-        setAge(age + 1)
-        MainLogger.tag(`age: ${age}`);
-      });
-      return () => {
-        console.log('this is callback')
-      }
-    }, []);
-    useEffect(() => {
-      
-    }, [1, 2]);
+    // useEffect(() => {
+    //   setTimeout(() => {
+    //     setAge(age + 1);
+    //     setAge(age + 1);
+    //     setAge(age + 1);
+    //   }, 3000);
+    // }, []);
+    // useEffect(() => {
+    //   MainLogger.info('useEffect', 'fucntion')
+    //   return () => {
+    //     MainLogger.info('useEffect', 'destroy')
+    //   }
+    // }, [age]);
+    // useLayoutEffect(() => {
+    //   MainLogger.info('useLayoutEffect', 'fucntion')
+    //   return () => {
+    //     MainLogger.info('useLayoutEffect', 'destroy')
+    //   }
+    // }, [age]);
     return React.createElement('div', {
       id: 'oDiv',
       ref: containerRef,
-      // onClick: () => {
-      //   setAge(age + 1)
-      //   MainLogger.tag(`age: ${age}`);
-      //   setName(name + 1)
-      // }
-    }, `user: ${age};name: ${name}`)
+      onClick: () => {
+        // setAge(1);
+        // setAge(2);
+        // setAge(4);
+        // setAge(3);
+        setAge(age + 1);
+        // MainLogger.tag(`age: ${age}`);
+        // setName(name + 1)
+      }
+    }, 
+    `user: ${age};name: ${name}`
+      // [
+      //   React.createElement('input'),
+      //   React.createElement('div', null, `user: ${age};name: ${name}`),
+      // ]
+    )
   }
 
-  // ReactDOM.createRoot(node, {
-  //   unstable_concurrentUpdatesByDefault: false
-  // }).render(React.createElement(User, null));
-
+  ReactDOM.createRoot(node, {
+    unstable_concurrentUpdatesByDefault: true
+  }).render(React.createElement(User, null));
+  // ReactDOM.render(React.createElement(User), node);
 })();
 
 // class
@@ -101,6 +113,74 @@ function extendsFunc (Parent, Child) {
   // ReactDOM.createRoot(node, {
   //   unstable_concurrentUpdatesByDefault: false
   // }).render(React.createElement(User));
-  ReactDOM.render(React.createElement(User), node)
+  // ReactDOM.render(React.createElement(User), node)
 })();
  
+// useDeferredValue
+;(function () {
+  const User = () => {
+    const [value, setValue] = useState(0);
+    const [name, setName] = useState('zhangsan');
+    const df = React.useDeferredValue(value);
+    
+    useEffect(() => {
+      // setValue(1000)
+    }, []);
+
+    return React.createElement('div', {
+      id: 'oDiv',
+      onClick: () => {
+        setValue(value + 1);
+      }
+    }, 
+    [
+      React.createElement('input', {
+        onInput: (e) => {
+          setValue(e.target.value)
+        }
+      }),
+      ...new Array(+df).fill(0).map((_, idx) => (
+        `user: ${idx}_${df}`
+      ))
+    ]);
+  }
+
+  // ReactDOM.createRoot(node, {
+  //   unstable_concurrentUpdatesByDefault: false
+  // }).render(React.createElement(User, null));
+})();
+
+// useDeferredValue
+;(function () {
+  const Demo = () => {
+    const [value, setValue] = useState(0);
+    const [isPending, startTransition] = React.useTransition();
+    console.log('isPending:', isPending)
+    return [
+      React.createElement('div', { key: '0' }, `${isPending}`),
+      React.createElement('input', {
+        key: '1',
+        onInput: (e) => {
+          setValue(e.target.value);
+          // startTransition(() => {
+          //   setValue(e.target.value);
+          // });
+        }
+      }),
+      React.createElement(
+        'div', 
+        {
+          key: '2',
+        },
+        new Array(100).fill(0).map((_, idx) => (
+          `demo: ${value}_${idx}`
+        )) 
+      ),
+    ];
+  }
+
+  // ReactDOM.createRoot(node, {
+  //   unstable_concurrentUpdatesByDefault: false
+  // }).render(React.createElement(Demo, null));
+  // ReactDOM.render(React.createElement(Demo), node);
+})();

@@ -408,11 +408,23 @@ export function markStarvedLanesAsExpired(
   // expiration time. If so, we'll assume the update is being starved and mark
   // it as expired to force it to finish.
   let lanes = pendingLanes;
+  const _lanes = 0b11100;
+  // lanes: 0b11100;
+  // index: 4
+  // lane: 0b10000
+  // ~lane: 0b1111101111
+  // lanes & ~lane: 0b1100
+  const _lane = 0b10000;
+  // MainLogger.info('index', pickArbitraryLaneIndex(_lanes));
+  // MainLogger.info('_lane', _lane);
+  // MainLogger.info('~_lane', ~_lane);
+  // MainLogger.info('lanes & ~lane', (_lanes & (~_lane)).toString(2));
   while (lanes > 0) {
-    const index = pickArbitraryLaneIndex(lanes);
+    const index = pickArbitraryLaneIndex(lanes); // 表示lanes后面有多少位
     const lane = 1 << index;
 
     const expirationTime = expirationTimes[index];
+   
     if (expirationTime === NoTimestamp) {
       // Found a pending lane with no expiration time. If it's not suspended, or
       // if it's pinged, assume it's CPU-bound. Compute a new expiration time
@@ -531,7 +543,8 @@ function laneToIndex(lane: Lane) {
 export function includesSomeLane(a: Lanes | Lane, b: Lanes | Lane) {
   return (a & b) !== NoLanes;
 }
-
+// 00011101
+// 00000101
 export function isSubsetOfLanes(set: Lanes, subset: Lanes | Lane) {
   return (set & subset) === subset;
 }

@@ -726,7 +726,7 @@ function commitLayoutEffectOnFiber(
             }
           }
         }
-
+        // CommitLogger.info('updateQueue', finishedWork.updateQueue)
         // TODO: I think this is now always non-null by the time it reaches the
         // commit phase. Consider removing the type check.
         const updateQueue: UpdateQueue<
@@ -1702,6 +1702,7 @@ function commitDeletion(
   current: Fiber,
   nearestMountedAncestor: Fiber,
 ): void {
+  // CommitLogger.tag(`commitDeletion supportsMutation: ${supportsMutation}`);
   if (supportsMutation) {
     // Recursively delete all host nodes from the parent.
     // Detach refs and call componentWillUnmount() on the whole subtree.
@@ -1715,6 +1716,7 @@ function commitDeletion(
 }
 
 function commitWork(current: Fiber | null, finishedWork: Fiber): void {
+  // CommitLogger.tag(`commitWork supportsMutation: ${supportsMutation}`)
   if (!supportsMutation) {
     switch (finishedWork.tag) {
       case FunctionComponent:
@@ -2198,12 +2200,13 @@ function commitLayoutEffects_begin(
   while (nextEffect !== null) {
     const fiber = nextEffect;
     const firstChild = fiber.child;
-    CommitLogger.info(
-      'commitLayoutEffects_begin',
-      enableSuspenseLayoutEffectSemantics &&
-      fiber.tag === OffscreenComponent &&
-      isModernRoot
-    );
+    // CommitLogger.info(
+    //   'commitLayoutEffects_begin',
+    //   enableSuspenseLayoutEffectSemantics &&
+    //   fiber.tag === OffscreenComponent &&
+    //   isModernRoot
+    // );
+    // render: false
     if (
       enableSuspenseLayoutEffectSemantics &&
       fiber.tag === OffscreenComponent &&
@@ -2250,6 +2253,11 @@ function commitLayoutEffects_begin(
       }
     }
 
+    // CommitLogger.info(
+    //   'commitLayoutEffects_begin',
+    //   (fiber.subtreeFlags & LayoutMask) !== NoFlags && firstChild !== null
+    // );
+    // true false
     if ((fiber.subtreeFlags & LayoutMask) !== NoFlags && firstChild !== null) {
       ensureCorrectReturnPointer(firstChild, fiber);
       nextEffect = firstChild;
@@ -2285,6 +2293,17 @@ function commitLayoutMountEffects_complete(
   while (nextEffect !== null) {
     const fiber = nextEffect;
 
+    // CommitLogger.info(
+    //   'commitLayoutMountEffects_complete', 
+    //   enableSuspenseLayoutEffectSemantics &&
+    //   isModernRoot &&
+    //   offscreenSubtreeWasHidden &&
+    //   !offscreenSubtreeIsHidden
+    // );
+    // render: false false
+    // update: false false false
+    // CommitLogger.info('nextEffect', nextEffect)
+    // CommitLogger.info('nextEffect', (fiber.flags & LayoutMask) !== NoFlags)
     if (
       enableSuspenseLayoutEffectSemantics &&
       isModernRoot &&

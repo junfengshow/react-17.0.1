@@ -384,6 +384,10 @@ export function getWorkInProgressRoot(): FiberRoot | null {
 }
 
 export function requestEventTime() {
+  // MainLogger.info(
+  //   '(executionContext & (RenderContext | CommitContext)) !== NoContext',
+  //   (executionContext & (RenderContext | CommitContext)) !== NoContext
+  // );
   if ((executionContext & (RenderContext | CommitContext)) !== NoContext) {
     // We're inside React, so it's fine to read the actual time.
     return now();
@@ -394,6 +398,7 @@ export function requestEventTime() {
     return currentEventTime;
   }
   // This is the first update since React yielded. Compute a new start time.
+  // performance.now();
   currentEventTime = now();
   return currentEventTime;
 }
@@ -403,6 +408,7 @@ export function getCurrentTime() {
 }
 
 export function requestUpdateLane(fiber: Fiber): Lane {
+  // MainLogger.info('fiber', fiber)
   // Special cases
   const mode = fiber.mode;
   if ((mode & ConcurrentMode) === NoMode) {
@@ -1955,6 +1961,7 @@ function commitRootImpl(root, renderPriorityLevel) {
     // node1 val user: 0;name: zhangsan
     commitMutationEffects(root, finishedWork, lanes);
     // 这里dom 渲染到页面上
+    // CommitLogger.step('commitRootImpl commitMutationEffects', 'after');
     // node1 val user: 1;name: zhangsan
     if (enableCreateEventHandleAPI) {
       if (shouldFireAfterActiveInstanceBlur) {
@@ -2135,7 +2142,7 @@ function commitRootImpl(root, renderPriorityLevel) {
 }
 
 export function flushPassiveEffects(): boolean {
-  // CommitLogger.step('commit rootWithPendingPassiveEffects', rootWithPendingPassiveEffects)
+  CommitLogger.step('commit rootWithPendingPassiveEffects', rootWithPendingPassiveEffects)
   // Returns whether passive effects were flushed.
   // TODO: Combine this check with the one in flushPassiveEFfectsImpl. We should
   // probably just combine the two functions. I believe they were only separate

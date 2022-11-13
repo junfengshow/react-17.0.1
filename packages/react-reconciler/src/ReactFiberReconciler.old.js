@@ -328,6 +328,7 @@ export function updateContainer(
     }
     update.callback = callback;
   }
+  // MainLogger.info('current', current)
   // 将更新添加到队列
   enqueueUpdate(current, update, lane);
   // current.updateQueue.shared.pending = update
