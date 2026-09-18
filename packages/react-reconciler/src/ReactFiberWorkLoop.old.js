@@ -269,27 +269,27 @@ const RootSuspendedWithDelay = 4;
 const RootCompleted = 5;
 
 // 自己写的
-const getExistStatusStr = function (status) {
-  return ([
+const getExistStatusStr = function(status) {
+  return [
     'RootIncomplete',
     'RootFatalErrored',
     'RootErrored',
     'RootSuspended',
     'RootSuspendedWithDelay',
     'RootCompleted',
-  ])[status]
-}
+  ][status];
+};
 
-const getRootExitStatusStr = function (status) {
-  return ({
+const getRootExitStatusStr = function(status) {
+  return {
     '0': 'RootIncomplete',
     '1': 'RootFatalErrored',
     '2': 'RootErrored',
     '3': 'RootSuspended',
     '4': 'RootSuspendedWithDelay',
     '5': 'RootCompleted',
-  })[status];
-}
+  }[status];
+};
 
 // Describes where we are in the React execution stack
 let executionContext: ExecutionContext = NoContext;
@@ -412,6 +412,7 @@ export function requestUpdateLane(fiber: Fiber): Lane {
   // Special cases
   const mode = fiber.mode;
   if ((mode & ConcurrentMode) === NoMode) {
+    // 这里不是 ConcurrentMode
     return (SyncLane: Lane);
   } else if (
     !deferRenderPhaseUpdateToNextBatch &&
@@ -494,7 +495,7 @@ export function scheduleUpdateOnFiber(
     warnAboutUpdateOnUnmountedFiberInDEV(fiber);
     return null;
   }
-  
+
   // enableUpdaterTracking： true
   // isDevToolsPresent：false
   if (enableUpdaterTracking) {
@@ -528,8 +529,8 @@ export function scheduleUpdateOnFiber(
   }
 
   MainLogger.info(
-    'scheduleUpdateOnFiber --> root === workInProgressRoot', 
-    root === workInProgressRoot
+    'scheduleUpdateOnFiber --> root === workInProgressRoot',
+    root === workInProgressRoot,
   );
   // TODO: Consolidate with `isInterleavedUpdate` check
   if (root === workInProgressRoot) {
@@ -558,7 +559,10 @@ export function scheduleUpdateOnFiber(
     }
   }
 
-  MainLogger.info('scheduleUpdateOnFiber --> lane === SyncLane', lane === SyncLane);
+  MainLogger.info(
+    'scheduleUpdateOnFiber --> lane === SyncLane',
+    lane === SyncLane,
+  );
   if (lane === SyncLane) {
     if (
       // Check if we're inside unbatchedUpdates
@@ -566,7 +570,9 @@ export function scheduleUpdateOnFiber(
       // Check if we're not already rendering
       (executionContext & (RenderContext | CommitContext)) === NoContext
     ) {
-      MainLogger.tag('scheduleUpdateOnFiber: (executionContext & LegacyUnbatchedContext) !== NoContext');
+      MainLogger.tag(
+        'scheduleUpdateOnFiber: (executionContext & LegacyUnbatchedContext) !== NoContext',
+      );
       // This is a legacy edge case. The initial mount of a ReactDOM.render-ed
       // root inside of batchedUpdates should be synchronous, but layout updates
       // should be deferred until the end of the batch.
@@ -575,8 +581,11 @@ export function scheduleUpdateOnFiber(
       ensureRootIsScheduled(root, eventTime);
 
       MainLogger.tag(`
-        scheduleUpdateOnFiber executionContext === NoContext: ${executionContext === NoContext}
-        (fiber.mode & ConcurrentMode) === NoMode: ${(fiber.mode & ConcurrentMode) === NoMode}
+        scheduleUpdateOnFiber executionContext === NoContext: ${executionContext ===
+          NoContext}
+        (fiber.mode & ConcurrentMode) === NoMode: ${(fiber.mode &
+          ConcurrentMode) ===
+          NoMode}
       `);
       if (
         executionContext === NoContext &&
@@ -694,7 +703,10 @@ function ensureRootIsScheduled(root: FiberRoot, currentTime: number) {
     }
     root.callbackNode = null;
     root.callbackPriority = NoLane;
-    MainLogger.line('ensureRootIsScheduled end 因为 nextLanes === NoLanes', true);
+    MainLogger.line(
+      'ensureRootIsScheduled end 因为 nextLanes === NoLanes',
+      true,
+    );
     return;
   }
 
@@ -718,7 +730,10 @@ function ensureRootIsScheduled(root: FiberRoot, currentTime: number) {
       }
     }
     // The priority hasn't changed. We can reuse the existing task. Exit.
-    MainLogger.line('ensureRootIsScheduled end 因为 existingCallbackPriority === newCallbackPriority', true);
+    MainLogger.line(
+      'ensureRootIsScheduled end 因为 existingCallbackPriority === newCallbackPriority',
+      true,
+    );
     return;
   }
 
@@ -738,14 +753,14 @@ function ensureRootIsScheduled(root: FiberRoot, currentTime: number) {
       `newCallbackPriority === SyncLane true根据条件执行不同函数`,
       `root.tag === LegacyRoot: ${root.tag === LegacyRoot}; 
       supportsMicrotasks: ${supportsMicrotasks}
-      `
+      `,
     );
     if (root.tag === LegacyRoot) {
       scheduleLegacySyncCallback(performSyncWorkOnRoot.bind(null, root));
     } else {
       scheduleSyncCallback(performSyncWorkOnRoot.bind(null, root));
     }
-    
+
     // 用微任务这是为啥？-- 为了合并状态
     if (supportsMicrotasks) {
       // Flush the queue in a microtask.
@@ -777,7 +792,7 @@ function ensureRootIsScheduled(root: FiberRoot, currentTime: number) {
     }
     MainLogger.step(
       `newCallbackPriority === SyncLane false`,
-      `执行scheduleCallback函数`
+      `执行scheduleCallback函数`,
     );
     newCallbackNode = scheduleCallback(
       schedulerPriorityLevel,
@@ -834,22 +849,29 @@ function performConcurrentWorkOnRoot(root, didTimeout) {
     // Defensive coding. This is never expected to happen.
     return null;
   }
-  
+
   // We disable time-slicing in some cases: if the work has been CPU-bound
   // for too long ("expired" work, to prevent starvation), or we're in
   // sync-updates-by-default mode.
   // TODO: We only check `didTimeout` defensively, to account for a Scheduler
   // bug we're still investigating. Once the bug in Scheduler is fixed,
   // we can remove this, since we track expiration ourselves.
-  MainLogger.tag(`performConcurrentWorkOnRoot --> render 阶段开始`)
+  MainLogger.tag(
+    `performConcurrentWorkOnRoot --> render 阶段开始 ${
+      shouldTimeSlice(root, lanes) &&
+      (disableSchedulerTimeoutInWorkLoop || !didTimeout)
+        ? 'renderRootConcurrent'
+        : 'renderRootSync'
+    }`,
+  );
   let exitStatus =
     shouldTimeSlice(root, lanes) &&
     (disableSchedulerTimeoutInWorkLoop || !didTimeout) // render: false
       ? renderRootConcurrent(root, lanes)
       : renderRootSync(root, lanes);
   MainLogger.step(
-    'performConcurrentWorkOnRoot --> exitStatus', 
-    getExistStatusStr(exitStatus)
+    'performConcurrentWorkOnRoot --> exitStatus',
+    getExistStatusStr(exitStatus),
   );
 
   if (exitStatus !== RootIncomplete) {
@@ -899,8 +921,8 @@ function performConcurrentWorkOnRoot(root, didTimeout) {
   ensureRootIsScheduled(root, now());
   if (root.callbackNode === originalCallbackNode) {
     MainLogger.step(
-      'performConcurrentWorkOnRoot --> root.callbackNode === originalCallbackNode', 
-      'return performConcurrentWorkOnRoot.bind(null, root);'
+      'performConcurrentWorkOnRoot --> root.callbackNode === originalCallbackNode',
+      'return performConcurrentWorkOnRoot.bind(null, root);',
     );
     // The task node scheduled for this root is the same one that's
     // currently executed. Need to return a continuation.
@@ -911,8 +933,8 @@ function performConcurrentWorkOnRoot(root, didTimeout) {
 
 function finishConcurrentRender(root, exitStatus, lanes) {
   MainLogger.step(
-    'finishConcurrentRender render 阶段完成 --> ', 
-    `exitStatus=${getRootExitStatusStr(exitStatus)}；lanes=${lanes}`
+    'finishConcurrentRender render 阶段完成 --> ',
+    `exitStatus=${getRootExitStatusStr(exitStatus)}；lanes=${lanes}`,
   );
   switch (exitStatus) {
     case RootIncomplete:
@@ -1043,7 +1065,7 @@ function performSyncWorkOnRoot(root) {
   if (enableProfilerTimer && enableProfilerNestedUpdatePhase) {
     syncNestedUpdateFlag();
   }
-  MainLogger.step('performSyncWorkOnRoot', root)
+  MainLogger.step('performSyncWorkOnRoot', root);
   invariant(
     (executionContext & (RenderContext | CommitContext)) === NoContext,
     'Should not already be working.',
@@ -1052,14 +1074,14 @@ function performSyncWorkOnRoot(root) {
   flushPassiveEffects();
 
   let lanes = getNextLanes(root, NoLanes);
-  
+
   // render: false
   if (!includesSomeLane(lanes, SyncLane)) {
     // There's no remaining sync work left.
     ensureRootIsScheduled(root, now());
     return null;
   }
-  MainLogger.tag(`performSyncWorkOnRoot --> render阶段开始`)
+  MainLogger.tag(`performSyncWorkOnRoot --> render阶段开始`);
   let exitStatus = renderRootSync(root, lanes);
   if (root.tag !== LegacyRoot && exitStatus === RootErrored) {
     executionContext |= RetryAfterError;
@@ -1529,7 +1551,7 @@ function renderRootSync(root: FiberRoot, lanes: Lanes) {
 
   executionContext = prevExecutionContext;
   popDispatcher(prevDispatcher);
- 
+
   if (workInProgress !== null) {
     // This is a sync render, so we should have finished the whole tree.
     invariant(
@@ -1648,7 +1670,7 @@ function renderRootConcurrent(root: FiberRoot, lanes: Lanes) {
 /** @noinline */
 function workLoopConcurrent() {
   // Perform work until Scheduler asks us to yield
-  MainLogger.info('workLoopConcurrent --> workInProgress', workInProgress)
+  MainLogger.info('workLoopConcurrent --> workInProgress', workInProgress);
   while (workInProgress !== null && !shouldYield()) {
     performUnitOfWork(workInProgress);
   }
@@ -1703,7 +1725,7 @@ function completeUnitOfWork(unitOfWork: Fiber): void {
       // completed
       setCurrentDebugFiberInDEV(completedWork);
       let next;
-      
+
       // true
       if (
         !enableProfilerTimer ||
@@ -1936,7 +1958,10 @@ function commitRootImpl(root, renderPriorityLevel) {
     // The first phase a "before mutation" phase. We use this phase to read the
     // state of the host tree right before we mutate it. This is where
     // getSnapshotBeforeUpdate is called.
-    CommitLogger.step('commitRootImpl commitBeforeMutationEffects', finishedWork);
+    CommitLogger.step(
+      'commitRootImpl commitBeforeMutationEffects',
+      finishedWork,
+    );
     const shouldFireAfterActiveInstanceBlur = commitBeforeMutationEffects(
       root,
       finishedWork,
@@ -1947,7 +1972,7 @@ function commitRootImpl(root, renderPriorityLevel) {
       // batch. This enables them to be grouped later.
       recordCommitTime();
     }
-    
+
     if (enableProfilerTimer && enableProfilerNestedUpdateScheduledHook) {
       // Track the root here, rather than in commitLayoutEffects(), because of ref setters.
       // Updates scheduled during ref detachment should also be flagged.
@@ -1955,7 +1980,10 @@ function commitRootImpl(root, renderPriorityLevel) {
     }
 
     // The next phase is the mutation phase, where we mutate the host tree.
-    CommitLogger.step('commitRootImpl commitMutationEffects finishedWork', finishedWork);
+    CommitLogger.step(
+      'commitRootImpl commitMutationEffects finishedWork',
+      finishedWork,
+    );
     CommitLogger.step('commitRootImpl commitMutationEffects root', root);
     // 这里dom 未渲染到页面上
     // node1 val user: 0;name: zhangsan
@@ -2079,7 +2107,6 @@ function commitRootImpl(root, renderPriorityLevel) {
     onCommitRootTestSelector();
   }
 
-
   CommitLogger.step('commitRootImpl ensureRootIsScheduled', finishedWork);
   // Always call this before exiting `commitRoot`, to ensure that any
   // additional work on this root is scheduled.
@@ -2137,12 +2164,15 @@ function commitRootImpl(root, renderPriorityLevel) {
   if (enableSchedulingProfiler) {
     markCommitStopped();
   }
-  CommitLogger.step('commit阶段结束', root)
+  CommitLogger.step('commit阶段结束', root);
   return null;
 }
 
 export function flushPassiveEffects(): boolean {
-  CommitLogger.step('commit rootWithPendingPassiveEffects', rootWithPendingPassiveEffects)
+  CommitLogger.step(
+    'flushPassiveEffects rootWithPendingPassiveEffects',
+    rootWithPendingPassiveEffects,
+  );
   // Returns whether passive effects were flushed.
   // TODO: Combine this check with the one in flushPassiveEFfectsImpl. We should
   // probably just combine the two functions. I believe they were only separate

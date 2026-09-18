@@ -83,6 +83,7 @@ import {
   NoTimestamp,
   getHighestPriorityPendingLanes,
   higherPriorityLane,
+  getLabelForLaneStr,
 } from './ReactFiberLane.old';
 import {
   getCurrentUpdatePriority,
@@ -281,6 +282,8 @@ export function updateContainer(
     }
   }
   const lane = requestUpdateLane(current);
+  // render: Default
+  // MainLogger.info('lane', getLabelForLaneStr(lane));
   // render: true
   if (enableSchedulingProfiler) {
     markRenderScheduled(lane);

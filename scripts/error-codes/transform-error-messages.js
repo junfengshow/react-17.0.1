@@ -21,7 +21,8 @@ module.exports = function(babel) {
       CallExpression(path, file) {
         const node = path.node;
         const noMinify = file.opts.noMinify;
-        if (path.get('callee').isIdentifier({name: 'invariant'})) {
+        // todo: change
+        if (false && path.get('callee').isIdentifier({name: 'invariant'})) {
           // Turns this code:
           //
           // invariant(condition, 'A %s message that contains %s', adj, noun);
@@ -42,9 +43,11 @@ module.exports = function(babel) {
           const condition = node.arguments[0];
           const errorMsgLiteral = evalToString(node.arguments[1]);
           const errorMsgExpressions = Array.from(node.arguments.slice(2));
+
           const errorMsgQuasis = errorMsgLiteral
             .split('%s')
             .map(raw => t.templateElement({raw, cooked: String.raw({raw})}));
+          // .map(raw => t.templateElement({raw, cooked: String.raw({raw})}));
 
           // Outputs:
           //   `A ${adj} message that contains ${noun}`;

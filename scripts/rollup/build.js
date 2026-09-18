@@ -746,7 +746,7 @@ async function buildEverything() {
     bundles.push(
       // [bundle, NODE_ES2015],
       // [bundle, NODE_ESM],
-      [bundle, UMD_DEV],
+      [bundle, UMD_DEV]
       // [bundle, UMD_PROD],
       // [bundle, UMD_PROFILING],
       // [bundle, NODE_DEV],

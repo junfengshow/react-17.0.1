@@ -123,6 +123,47 @@ export function getLabelsForLanes(lanes: Lanes): Array<string> | void {
   }
 }
 
+// 获取lane的变量名
+export function getLabelForLaneStr(lane: Lane): String {
+  if (lane & SyncLane) {
+    return 'Sync';
+  }
+  if (lane & InputContinuousHydrationLane) {
+    return 'InputContinuousHydration';
+  }
+  if (lane & InputContinuousLane) {
+    return 'InputContinuous';
+  }
+  if (lane & DefaultHydrationLane) {
+    return 'DefaultHydration';
+  }
+  if (lane & DefaultLane) {
+    return 'Default';
+  }
+  if (lane & TransitionHydrationLane) {
+    return 'TransitionHydration';
+  }
+  if (lane & TransitionLanes) {
+    return 'Transition(s)';
+  }
+  if (lane & RetryLanes) {
+    return 'Retry(s)';
+  }
+  if (lane & SelectiveHydrationLane) {
+    return 'SelectiveHydration';
+  }
+  if (lane & IdleHydrationLane) {
+    return 'IdleHydration';
+  }
+  if (lane & IdleLane) {
+    return 'Idle';
+  }
+  if (lane & OffscreenLane) {
+    return 'Offscreen';
+  }
+  return '';
+}
+
 export const NoTimestamp = -1;
 
 let nextTransitionLane: Lane = TransitionLane1;
@@ -424,7 +465,7 @@ export function markStarvedLanesAsExpired(
     const lane = 1 << index;
 
     const expirationTime = expirationTimes[index];
-   
+
     if (expirationTime === NoTimestamp) {
       // Found a pending lane with no expiration time. If it's not suspended, or
       // if it's pinged, assume it's CPU-bound. Compute a new expiration time
